@@ -64,7 +64,8 @@ describe('Mailin', function () {
                         checksum: 'e9fa6319356c536b962650eda9399a44',
                         length: '28'
                     }],
-                    isDkimValid: 'false'
+                    dkim: 'failed',
+                    language: 'pidgin'
                 }
             });
 
