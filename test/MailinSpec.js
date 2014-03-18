@@ -63,7 +63,8 @@ describe('Mailin', function () {
                         contentId: '6e4a9c577e603de61e554abab84f6297@mailparser',
                         checksum: 'e9fa6319356c536b962650eda9399a44',
                         length: '28'
-                    }]
+                    }],
+                    isDkimValid: 'false'
                 }
             });
 

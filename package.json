@@ -27,7 +27,8 @@
     "simplesmtp": "^0.3.23",
     "mailparser": "^0.4.1",
     "lodash": "^2.4.1",
-    "request": "^2.34.0"
+    "request": "^2.34.0",
+    "async": "^0.2.10"
   },
   "devDependencies": {
     "mailcomposer": "^0.2.8",
