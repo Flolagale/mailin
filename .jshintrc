@@ -1,0 +1,24 @@
+{
+    "curly": false,
+    "eqeqeq": true,
+    "indent": 4,
+    "latedef": true,
+    "newcap": true,
+    "nonew": true,
+    "undef": true,
+    "unused": true,
+    "trailing": true,
+    "white": true,
+    "globalstrict": true,
+    "browser": true,
+    "node": true,
+    "jquery": true,
+    "devel": true,
+    "globals": {
+        "before": false,
+        "after": false,
+        "it": false,
+        "describe": false,
+        "beforeEach": false
+    }
+}
