@@ -12,7 +12,9 @@ server.head('/webhook', function (req, res) {
 });
 server.post('/webhook', function (req, res) {
     console.log('Receiving webhook.');
-    console.log(util.inspect(req.body, {depth: 5}));
+    console.log(util.inspect(req.body, {
+        depth: 5
+    }));
 
     res.send(200);
 });
@@ -23,4 +25,3 @@ server.listen(3000, function (err) {
         console.log('Http server listening on port 3000');
     }
 });
-

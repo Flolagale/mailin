@@ -84,8 +84,8 @@ describe('Mailin', function () {
             /* Run only once as 'idle' is emitted again after message delivery. */
             client.once('idle', function () {
                 client.useEnvelope({
-                    from: 'me@example.com',
-                    to: ['receiver1@example.com', 'receiver2@example.com']
+                    from: 'me@jokund.com',
+                    to: ['receiver1@jokund.com', 'receiver2@jokund.com']
                 });
             });
 
