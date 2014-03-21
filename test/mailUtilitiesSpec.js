@@ -1,7 +1,8 @@
 /* jshint expr: true */
 'use strict';
 
-var mailSignatureVerifier = require('../lib/mailSignatureVerifier');
+var fs = require('fs');
+var mailUtilities = require('../lib/mailUtilities');
 
 var should = null;
 should = require('should');
@@ -9,7 +10,7 @@ should = require('should');
 describe('The mail signature verfier', function () {
     it('should be able to verify the spf for a given ip, address and host',
         function (done) {
-            mailSignatureVerifier.validateSpf('180.73.166.174',
+            mailUtilities.validateSpf('180.73.166.174',
                 'someone@gmail.com', 'gmail.com', function (err, isSpfValid) {
                     if (err) console.log(err);
                     should.not.exist(err);
@@ -17,4 +18,15 @@ describe('The mail signature verfier', function () {
                     done();
                 });
         });
+
+    it('should be able to compute a spam score for an email', function (done) {
+        var email = fs.readFileSync('./test/fixtures/test.eml').toString();
+        mailUtilities.computeSpamScore(email, function (err, result) {
+            if (err) console.log(err);
+            should.not.exist(err);
+
+            result.should.eql(3.3);
+            done();
+        });
+    });
 });

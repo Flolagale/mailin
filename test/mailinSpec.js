@@ -65,6 +65,8 @@ describe('Mailin', function () {
                         length: '28'
                     }],
                     dkim: 'failed',
+                    spf: 'failed',
+                    spamScore: 3.3,
                     language: 'pidgin'
                 }
             });

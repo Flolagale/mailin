@@ -31,7 +31,9 @@
     "async": "^0.2.10",
     "shelljs": "^0.2.6",
     "languagedetect": "^1.1.0",
-    "cheerio": "^0.13.1"
+    "cheerio": "^0.13.1",
+    "node-spamc": "0.0.1",
+    "spamc": "0.0.1"
   },
   "devDependencies": {
     "mailcomposer": "^0.2.8",
