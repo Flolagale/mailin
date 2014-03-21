@@ -1,7 +1,7 @@
 {
   "name": "mailin",
   "version": "0.0.0",
-  "description": "Artisanal inbound emails for everyone",
+  "description": "Artisanal inbound emails for every web app",
   "main": "index.js",
   "bin": {
     "mailin": "./cli.js"
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Bluefinch/mailin.git"
+    "url": "https://github.com/Flolagale/mailin.git"
   },
   "keywords": [
     "inbound",
@@ -23,9 +23,9 @@
   "author": "Florent Galland",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Bluefinch/mailin/issues"
+    "url": "https://github.com/Flolagale/mailin/issues"
   },
-  "homepage": "https://github.com/Bluefinch/mailin",
+  "homepage": "https://github.com/Flolagale/mailin",
   "dependencies": {
     "simplesmtp": "^0.3.23",
     "mailparser": "^0.4.1",
