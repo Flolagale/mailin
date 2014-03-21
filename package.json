@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "Artisanal inbound emails for everyone",
   "main": "index.js",
+  "bin": {
+    "mailin": "./cli.js"
+  },
   "scripts": {
     "test": "grunt test"
   },
@@ -32,8 +35,9 @@
     "shelljs": "^0.2.6",
     "languagedetect": "^1.1.0",
     "cheerio": "^0.13.1",
-    "node-spamc": "0.0.1",
-    "spamc": "0.0.1"
+    "spamc": "0.0.1",
+    "commander": "^2.1.0",
+    "winston": "^0.7.2"
   },
   "devDependencies": {
     "mailcomposer": "^0.2.8",
