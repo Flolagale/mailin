@@ -8,9 +8,9 @@ var program = require('commander');
 var pkg = require('./package.json');
 
 program.version(pkg.version)
-    .option('-p, --port', 'The port to which the mailin smtp server should listen to. Default to 25.', parseInt)
-    .option('-w, --webhook', 'The webhook url to which the parsed emails are posted. Default to http://localhost:3000/webhook.')
-    .option('-l, --log-file', "The log file path. Default to '/var/log/mailin.log'.");
+    .option('-p, --port <n>', 'The port to which the mailin smtp server should listen to. Default to 25.', parseInt)
+    .option('-w, --webhook [url]', 'The webhook url to which the parsed emails are posted. Default to http://localhost:3000/webhook.')
+    .option('-l, --log-file [file path]', "The log file path. Default to '/var/log/mailin.log'.");
 
 program.parse(process.argv);
 
