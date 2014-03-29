@@ -13,7 +13,8 @@ program.version(pkg.version)
     .option('-l, --log-file [file path]', "The log file path. Default to '/var/log/mailin.log'.")
     .option('--disable-dkim', 'Disable dkim checking. The dkim field in the webhook payload will be set to false.')
     .option('--disable-spf', 'Disable spf checking. The spf field in the webhook payload will be set to false.')
-    .option('--disable-spam-score', 'Disable spam score computation. The spamScore field in the webhook payload will be set to 0.0.');
+    .option('--disable-spam-score', 'Disable spam score computation. The spamScore field in the webhook payload will be set to 0.0.')
+    .option('--verbose', 'Set the logging level to verbose.');
 
 program.parse(process.argv);
 
@@ -24,7 +25,8 @@ mailin.start({
     logFile: program.logFile || '/var/log/mailin.log',
     disableDkim: program.disableDkim,
     disableSpf: program.disableSpf,
-    disableSpamScore: program.disableSpamScore
+    disableSpamScore: program.disableSpamScore,
+    verbose: program.verbose
 }, function (err) {
     if (err) process.exit(1);
 

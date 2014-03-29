@@ -10,7 +10,9 @@ var should = null;
 should = require('should');
 
 before(function (done) {
-    mailin.start(function (err) {
+    mailin.start({
+        verbose: true
+    }, function (err) {
         should.not.exist(err);
         done();
     });
@@ -30,45 +32,49 @@ describe('Mailin', function () {
         server.post('/webhook', function (req, res) {
             console.log('Receiving webhook.');
 
-            /* Delete the headers that include a timestamp. */
-            delete req.body.mailinMsg.headers.received;
-            delete req.body.mailinMsg.attachments[0].content;
+            should.exist(req.body);
+            should.exist(req.body.mailinMsg);
+            should.exist(req.body['dummyFile.txt']);
 
-            req.body.should.eql({
-                mailinMsg: {
-                    html: '<b>Hello world!</b>',
-                    text: 'Hello world!',
-                    headers: {
-                        'x-mailer': 'Nodemailer 1.0',
-                        from: 'andris@tr.ee',
-                        to: 'andris@node.ee',
-                        'content-type': 'multipart/mixed; boundary="----mailcomposer-?=_1-1395066415427"',
-                        'mime-version': '1.0'
-                    },
-                    priority: 'normal',
-                    from: [{
-                        address: 'andris@tr.ee',
-                        name: ''
-                    }],
-                    to: [{
-                        address: 'andris@node.ee',
-                        name: ''
-                    }],
-                    attachments: [{
-                        contentType: 'text/plain',
-                        fileName: 'dummyFile.txt',
-                        contentDisposition: 'attachment',
-                        transferEncoding: 'base64',
-                        generatedFileName: 'dummyFile.txt',
-                        contentId: '6e4a9c577e603de61e554abab84f6297@mailparser',
-                        checksum: 'e9fa6319356c536b962650eda9399a44',
-                        length: '28'
-                    }],
-                    dkim: 'failed',
-                    spf: 'failed',
-                    spamScore: 3.3,
-                    language: 'pidgin'
-                }
+            var mailinMsg = JSON.parse(req.body.mailinMsg);
+
+            /* Delete the headers that include a timestamp. */
+            delete mailinMsg.headers.received;
+
+            mailinMsg.should.eql({
+                html: '<b>Hello world!</b>',
+                text: 'Hello world!',
+                headers: {
+                    'x-mailer': 'Nodemailer 1.0',
+                    from: 'andris@tr.ee',
+                    to: 'andris@node.ee',
+                    'content-type': 'multipart/mixed; boundary="----mailcomposer-?=_1-1395066415427"',
+                    'mime-version': '1.0'
+                },
+                priority: 'normal',
+                from: [{
+                    address: 'andris@tr.ee',
+                    name: ''
+                }],
+                to: [{
+                    address: 'andris@node.ee',
+                    name: ''
+                }],
+                attachments: [{
+                    contentType: 'text/plain',
+                    fileName: 'dummyFile.txt',
+                    contentDisposition: 'attachment',
+                    transferEncoding: 'base64',
+                    generatedFileName: 'dummyFile.txt',
+                    contentId: '6e4a9c577e603de61e554abab84f6297@mailparser',
+                    checksum: 'e9fa6319356c536b962650eda9399a44',
+                    length: '28'
+                }],
+                dkim: 'failed',
+                spf: 'failed',
+                spamScore: 3.3,
+                language: 'pidgin',
+                cc: []
             });
 
             res.send(200);

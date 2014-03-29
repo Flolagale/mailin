@@ -1,6 +1,6 @@
 {
   "name": "mailin",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Artisanal inbound emails for every web app",
   "main": "index.js",
   "bin": {
@@ -35,9 +35,9 @@
     "shelljs": "^0.2.6",
     "languagedetect": "^1.1.0",
     "cheerio": "^0.13.1",
-    "spamc": "0.0.1",
     "commander": "^2.1.0",
-    "winston": "^0.7.2"
+    "winston": "^0.7.2",
+    "spamc": "0.0.3"
   },
   "devDependencies": {
     "mailcomposer": "^0.2.8",

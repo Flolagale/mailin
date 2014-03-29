@@ -1,7 +1,6 @@
 'use strict';
 
 var express = require('express');
-// var util = require('util');
 var fs = require('fs');
 
 /* Make an http server to receive the webhook. */
@@ -12,6 +11,7 @@ server.use(express.bodyParser({
 server.use(server.router);
 
 server.head('/webhook', function (req, res) {
+    console.log('Received head request from webhook.');
     res.send(200);
 });
 
@@ -21,17 +21,15 @@ server.post('/webhook', function (req, res) {
     /* Respond early to avoid timouting the mailin server. */
     res.send(200);
 
-    // console.log(util.inspect(req.body, {
-    // depth: 5
-    // }));
+    console.log(req.body);
 
     /* Write down the payload for ulterior inspection. */
-    fs.writeFileSync('payload.json', JSON.stringify(req.body));
-    var msg = req.body.mailinMsg;
+    fs.writeFileSync('payload.json', req.body.mailinMsg);
+    var msg = JSON.parse(req.body.mailinMsg);
     if (msg.attachments) {
         msg.attachments.forEach(function (attachment) {
-            var buffer = new Buffer(attachment.content, 'base64');
-            fs.writeFileSync(attachment.name, buffer);
+            // var buffer = new Buffer(attachment.content, 'base64');
+            fs.writeFileSync(attachment.generatedFileName, req.body[attachment.generatedFileName]);
         });
     }
 
