@@ -1,7 +1,7 @@
 #Mailin
 
 __Artisanal inbound emails for every web app__
-<!-- <img align="right" src="postman.jpg"/> -->
+<img align="right" src="postman.jpg"/>
 
 Mailin is an smtp server that listen for emails, parse them and post them as json to the url of your choice.
 It checks the incoming emails [dkim](http://en.wikipedia.org/wiki/DomainKeys_Identified_Mail), [spf](http://en.wikipedia.org/wiki/Sender_Policy_Framework), spam score (using [spamassassin](http://spamassassin.apache.org/)) and tells you in which language the email is written.
@@ -96,3 +96,5 @@ mailin.start({
 });
 
 ```
+
+Notice: Postman image copyright [Charlie Allen](http://charlieallensblog.blogspot.fr)
