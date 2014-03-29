@@ -1,5 +1,4 @@
-Mailin
-======
+#Mailin
 
 __Artisanal inbound emails for every web app__
 
@@ -10,9 +9,9 @@ Mailin can be used as a standalone application directly from the command line, o
 
 =======
 
-####Initial setup
+###Initial setup
 
-#####Dependencies
+####Dependencies
 
 Mailin can run without any dependencies, but having them allow you to use some additional features.
 
@@ -23,12 +22,12 @@ To handle the spam score computation, Mailin depends on spamassassin and its ser
 sudo aptitude install spamassassin spamc
 ```
 
-#####The crux: setting your DNS correctly
+####The crux: setting your DNS correctly
 
 ========
 
-####Using Mailin
-#####From the command line
+###Using Mailin
+####From the command line
 
 Install mailin globally.
 
@@ -49,7 +48,11 @@ From now on, mailin will listen for incoming emails, parse them and post an urle
 
 -- webhook format
 
-#####Embedded inside a node application
+#####Gotchas
+* ```error: listen EACCES```: your user do not have sufficients privileges to run on the given port. Ports under 1000 are restricted to root user. Try with [sudo](http://xkcd.com/149/).
+* ```error: listen EADDRINUSE```: The current port is already used by something. Most likely, you are trying to use port 25 and your machine's [mail transport agent](http://en.wikipedia.org/wiki/Message_transfer_agent) is already running. Stop it with something like ```sudo service exim4 stop``` or ```sudo service postfix stop``` before using Mailin.
+
+####Embedded inside a node application
 
 Install Mailin locally.
 
