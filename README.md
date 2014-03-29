@@ -1,6 +1,7 @@
 #Mailin
 
 __Artisanal inbound emails for every web app__
+<!-- <img align="right" src="postman.jpg"/> -->
 
 Mailin is an smtp server that listen for emails, parse them and post them as json to the url of your choice.
 It checks the incoming emails [dkim](http://en.wikipedia.org/wiki/DomainKeys_Identified_Mail), [spf](http://en.wikipedia.org/wiki/Sender_Policy_Framework), spam score (using [spamassassin](http://spamassassin.apache.org/)) and tells you in which language the email is written.
@@ -44,7 +45,7 @@ sudo mailin --webhook http://mydomain.com/incoming_emails
 Or, prefered choice, use something like ```authbind``` to run Mailin with a standard user while still using port 25.
 Here comes a [tutorial on how to setup authbind](http://respectthecode.tumblr.com/post/16461876216/using-authbind-to-run-node-js-on-port-80-with-dreamhost).
 
-From now on, mailin will listen for incoming emails, parse them and post an urlencoded form ```application/x-www-form-urlencoded``` to your webhook url.
+From now on, mailin will listen for incoming emails, parse them and post an urlencoded form ```multipart/form-data``` to your webhook url.
 
 -- webhook format
 
