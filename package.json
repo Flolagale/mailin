@@ -1,24 +1,28 @@
 {
   "name": "mailin",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Artisanal inbound emails for every web app",
   "main": "index.js",
   "bin": {
-    "mailin": "./cli.js"
+    "mailin": "./run-cli.js"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "start": "./run-cli.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Flolagale/mailin.git"
   },
   "keywords": [
+    "incoming",
     "inbound",
     "email",
+    "parse",
     "smtp",
     "easy",
-    "webhook"
+    "webhook",
+    "post"
   ],
   "author": "Florent Galland",
   "license": "MIT",
@@ -27,17 +31,18 @@
   },
   "homepage": "https://github.com/Flolagale/mailin",
   "dependencies": {
-    "simplesmtp": "^0.3.23",
-    "mailparser": "^0.4.1",
-    "lodash": "^2.4.1",
-    "request": "^2.34.0",
     "async": "^0.2.10",
-    "shelljs": "^0.2.6",
-    "languagedetect": "^1.1.0",
     "cheerio": "^0.13.1",
     "commander": "^2.1.0",
-    "winston": "^0.7.2",
-    "spamc": "0.0.3"
+    "forever-monitor": "^1.2.3",
+    "languagedetect": "^1.1.0",
+    "lodash": "^2.4.1",
+    "mailparser": "^0.4.1",
+    "request": "^2.34.0",
+    "shelljs": "^0.2.6",
+    "simplesmtp": "^0.3.23",
+    "spamc": "0.0.3",
+    "winston": "^0.7.2"
   },
   "devDependencies": {
     "mailcomposer": "^0.2.8",
