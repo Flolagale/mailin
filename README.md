@@ -8,6 +8,8 @@ It checks the incoming emails [dkim](http://en.wikipedia.org/wiki/DomainKeys_Ide
 
 Mailin can be used as a standalone application directly from the command line, or embedded inside a node application.
 
+Mailin is relies heavily on the excellent work of [@andris9](https://github.com/andris9) for the smtp and mail parsing services.
+
 
 ###Initial setup
 
@@ -33,6 +35,8 @@ In order to receive emails, your smtp server address should be made available so
 * Add an MX record: ```subdomain.domain.com MX 10 mxsubdomain.domain.com```. This means that the mail server for addresses like ```*@subdomain.domain.com``` will be ```mxsubdomain.domain.com```.
 * Add an A record: ```mxsubdomain.domain.com A the.ip.address.of.your.mailin.server```. This tells at which ip address the mail server can be found.
 * Finally, add a CNAME record for you email address domain: ```subdomain.domain.com CNAME mxsubdomain.domain.com```. Note that if we did the setup for a top level domain (no subdomain, email addresses such as ```*@domain.com```), this last record should have been an A record towards the real ip address of your mail server box (the same as the second record we set up).
+
+You can fire up Mailin (see next section) and use an [smtp server tester](http://mxtoolbox.com/diagnostic.aspx) to verify that everything is correct.
 
 
 ###Using Mailin
