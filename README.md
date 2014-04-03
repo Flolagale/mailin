@@ -8,8 +8,9 @@ It checks the incoming emails [dkim](http://en.wikipedia.org/wiki/DomainKeys_Ide
 
 Mailin can be used as a standalone application directly from the command line, or embedded inside a node application.
 
-Mailin is relies heavily on the excellent work of [@andris9](https://github.com/andris9) for the smtp and mail parsing services.
+Mailin relies heavily on the excellent work of [@andris9](https://github.com/andris9) for the smtp and mail parsing services.
 
+Why? Because we needed it for our startup [jokund.com](http://jokund.com).
 
 ###Initial setup
 
@@ -64,6 +65,50 @@ and make sure the your user can write to the log file.
 At this point, Mailin will listen for incoming emails, parse them and post an urlencoded form ```multipart/form-data``` to your webhook url.
 
 #####Webhook format
+The webhook payload is a multipart form with a ```mailinMsg``` fields always present and some optionnal additional fields containing the content of the attachements. How to handle this? We got you covered, there is a working example using node and express in [mailin/test/utils/server.js](https://github.com/Flolagale/mailin/blob/master/test/utils/server.js). Anyway, once parsed, you should end up with something like:
+```
+{
+  mailinMsg:
+  {
+      html: '<div><b>Hello world!</b></div>',
+      text: 'Hello world!',
+      headers: {
+          from: 'John Doe <john.doe@somewhere.com>',
+          to: 'Jane Doe <jane.doe@somewhereelse.com>',
+          'content-type': 'multipart/mixed; boundary="----mailcomposer-?=_1-1395066415427"',
+          'mime-version': '1.0'
+      },
+      priority: 'normal',
+      from: [{
+          address: 'john.doe@somewhere.com',
+          name: 'John Doe'
+      }],
+      to: [{
+          address: 'jane.doe@somewhereelse.com',
+          name: 'Jane Doe'
+      }],
+      attachments: [{
+          contentType: 'text/plain',
+          fileName: 'dummyFile.txt',
+          contentDisposition: 'attachment',
+          transferEncoding: 'base64',
+          generatedFileName: 'dummyFile.txt',
+          contentId: '6e4a9c577e603de61e554abab84f6297@mailparser',
+          checksum: 'e9fa6319356c536b962650eda9399a44',
+          length: '28'
+      }],
+      dkim: 'failed',
+      spf: 'pass',
+      spamScore: 3.3,
+      language: 'english',
+      cc: [{
+        address: 'james@mail.com',
+        name: 'James'
+      }]
+  },
+  'dummyFile.txt': 'a-base64-encoded-string=='
+}
+```
 
 #####Gotchas
 * ```error: listen EACCES```: your user do not have sufficients privileges to run on the given port. Ports under 1000 are restricted to root user. Try with [sudo](http://xkcd.com/149/).
