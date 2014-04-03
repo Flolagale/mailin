@@ -3,10 +3,11 @@
 
 var forever = require('forever-monitor');
 var logger = require('./lib/logger');
+var path = require('path');
 
 var pkg = require('./package.json');
 
-var mailinProcess = new (forever.Monitor)('cli.js', {
+var mailinProcess = new (forever.Monitor)(path.join(__dirname, 'cli.js'), {
     max: 100,
     minUptime: 10000,
     options: process.argv
