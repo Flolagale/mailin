@@ -2,23 +2,34 @@
 'use strict';
 
 var forever = require('forever-monitor');
+var logger = require('./lib/logger');
+
+var pkg = require('./package.json');
 
 var mailinProcess = new (forever.Monitor)('cli.js', {
-    max: 3,
+    max: 100,
     minUptime: 10000,
     options: process.argv
 });
 
 mailinProcess.on('error', function (err) {
-    console.log(err);
+    logger.error('Error caused Mailin to crash.');
+    logger.error('Please report this to ' + pkg.bugs.url);
+    logger.error(err);
+    logger.info();
+    logger.info();
 });
 
 mailinProcess.on('restart', function () {
-    console.log('Mailin restarted.');
+    logger.warn('It is likely that an error caused Mailin to crash.');
+    logger.warn('Please report this to ' + pkg.bugs.url);
+    logger.warn('Mailin restarted.');
+    logger.info();
+    logger.info();
 });
 
 mailinProcess.on('exit', function () {
-    console.log('Mailin exited.');
+    logger.info('Mailin stopped.');
 });
 
 mailinProcess.start();
