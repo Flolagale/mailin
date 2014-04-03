@@ -8,7 +8,6 @@ It checks the incoming emails [dkim](http://en.wikipedia.org/wiki/DomainKeys_Ide
 
 Mailin can be used as a standalone application directly from the command line, or embedded inside a node application.
 
-=======
 
 ###Initial setup
 
@@ -35,7 +34,6 @@ In order to receive emails, your smtp server address should be made available so
 * Add an A record: ```mxsubdomain.domain.com A the.ip.address.of.your.mailin.server```. This tells at which ip address the mail server can be found.
 * Finally, add a CNAME record for you email address domain: ```subdomain.domain.com CNAME mxsubdomain.domain.com```. Note that if we did the setup for a top level domain (no subdomain, email addresses such as ```*@domain.com```), this last record should have been an A record towards the real ip address of your mail server box (the same as the second record we set up).
 
-========
 
 ###Using Mailin
 ####From the command line
@@ -53,11 +51,15 @@ Ports number under 1000 are reserved to root user. So two options here. Either r
 sudo mailin --webhook http://mydomain.com/incoming_emails
 ```
 Or, prefered choice, use something like ```authbind``` to run Mailin with a standard user while still using port 25.
-Here comes a [tutorial on how to setup authbind](http://respectthecode.tumblr.com/post/16461876216/using-authbind-to-run-node-js-on-port-80-with-dreamhost).
+Here comes a [tutorial on how to setup authbind](http://respectthecode.tumblr.com/post/16461876216/using-authbind-to-run-node-js-on-port-80-with-dreamhost). In this case, do something like:
+```
+authbind --deep mailin --webhook http://mydomain.com/incoming_emails
+```
+and make sure the your user can write to the log file.
 
-From now on, mailin will listen for incoming emails, parse them and post an urlencoded form ```multipart/form-data``` to your webhook url.
+At this point, Mailin will listen for incoming emails, parse them and post an urlencoded form ```multipart/form-data``` to your webhook url.
 
--- webhook format
+#####Webhook format
 
 #####Gotchas
 * ```error: listen EACCES```: your user do not have sufficients privileges to run on the given port. Ports under 1000 are restricted to root user. Try with [sudo](http://xkcd.com/149/).
@@ -107,5 +109,8 @@ mailin.start({
 });
 
 ```
+###Todo
+If webhook fails, schedule some retries.
+
 
 Notice: Postman image copyright [Charlie Allen](http://charlieallensblog.blogspot.fr)
