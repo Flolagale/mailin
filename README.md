@@ -146,18 +146,20 @@ mailin.on('message', function (message) {
 });
 
 /* Start the Mailin server. The available options are: 
- options = {
-    port: 25,
-    webhook: 'http://mydomain.com/mailin/incoming,
-    disableWebhook: false,
-    logFile: '/some/local/path'
- }; */
+ *  options = {
+ *     port: 25,
+ *     webhook: 'http://mydomain.com/mailin/incoming,
+ *     disableWebhook: false,
+ *     logFile: '/some/local/path'
+ *  };
+ * Here disale the webhook posting so that you can do what you want with the
+ * parsed message. */
 mailin.start({
   port: 25,
-  disableWebhook: true // Disable the webhook posting, so that you do what you want with the parsed message.
+  disableWebhook: true // Disable the webhook posting.
 });
-
 ```
+
 ###Todo
 If webhook fails, schedule some retries.
 
