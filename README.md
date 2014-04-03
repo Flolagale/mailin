@@ -14,7 +14,12 @@ Mailin can be used as a standalone application directly from the command line, o
 
 ####Dependencies
 
-Mailin can run without any dependencies, but having them allow you to use some additional features.
+Mailin can run without any dependencies other than node itself, but having them allow you to use some additional features.
+
+So first make sure the node is available, and the ```node``` command as well. On Debian/Ubuntu boxes:
+```
+sudo aptitude install nodejs ; sudo ln -s $(which nodejs) /usr/bin/node
+```
 
 To handle dkim and spf checking, Mailin depends on Python 2.7. On Linux machines, it is very not likely that you don't have a decent version of Python available.
 
@@ -23,7 +28,12 @@ To handle the spam score computation, Mailin depends on spamassassin and its ser
 sudo aptitude install spamassassin spamc
 ```
 
-####The crux: setting your DNS correctly
+####The crux: setting up your DNS correctly
+
+In order to receive emails, your smtp server address should be made available somewhere. Three records should be added to your DNS records. Let us pretend that we want to receive emails at ```*@subdomain.domain.com```:
+* Add an MX record: ```subdomain.domain.com MX 10 mxsubdomain.domain.com```. This means that the mail server for addresses like ```*@subdomain.domain.com``` will be ```mxsubdomain.domain.com```.
+* Add an A record: ```mxsubdomain.domain.com A the.ip.address.of.your.mailin.server```. This tells at which ip address the mail server can be found.
+* Finally, add a CNAME record for you email address domain: ```subdomain.domain.com CNAME mxsubdomain.domain.com```. Note that if we did the setup for a top level domain (no subdomain, email addresses such as ```*@domain.com```), this last record should have been an A record towards the real ip address of your mail server box (the same as the second record we set up).
 
 ========
 
@@ -51,7 +61,8 @@ From now on, mailin will listen for incoming emails, parse them and post an urle
 
 #####Gotchas
 * ```error: listen EACCES```: your user do not have sufficients privileges to run on the given port. Ports under 1000 are restricted to root user. Try with [sudo](http://xkcd.com/149/).
-* ```error: listen EADDRINUSE```: The current port is already used by something. Most likely, you are trying to use port 25 and your machine's [mail transport agent](http://en.wikipedia.org/wiki/Message_transfer_agent) is already running. Stop it with something like ```sudo service exim4 stop``` or ```sudo service postfix stop``` before using Mailin.
+* ```error: listen EADDRINUSE```: the current port is already used by something. Most likely, you are trying to use port 25 and your machine's [mail transport agent](http://en.wikipedia.org/wiki/Message_transfer_agent) is already running. Stop it with something like ```sudo service exim4 stop``` or ```sudo service postfix stop``` before using Mailin.
+* ```node: command not found```: most likely, your system does not have node installed or it is installed with a different name. For instance on Debian/Ubuntu, the node interpreter is called nodejs. The quick fix is making a symlink: ```ln -s $(which nodejs) /usr/bin/node``` to make the node command available.
 
 ####Embedded inside a node application
 
