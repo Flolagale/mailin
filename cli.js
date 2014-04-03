@@ -14,7 +14,8 @@ program.version(pkg.version)
     .option('--disable-dkim', 'Disable dkim checking. The dkim field in the webhook payload will be set to false.')
     .option('--disable-spf', 'Disable spf checking. The spf field in the webhook payload will be set to false.')
     .option('--disable-spam-score', 'Disable spam score computation. The spamScore field in the webhook payload will be set to 0.0.')
-    .option('--verbose', 'Set the logging level to verbose.');
+    .option('--verbose', 'Set the logging level to verbose.')
+    .option('--debug', 'Printout debug info such as the smtp commands.');
 
 program.parse(process.argv);
 
@@ -26,7 +27,8 @@ mailin.start({
     disableDkim: program.disableDkim,
     disableSpf: program.disableSpf,
     disableSpamScore: program.disableSpamScore,
-    verbose: program.verbose
+    verbose: program.verbose,
+    debug: program.debug
 }, function (err) {
     if (err) process.exit(1);
 

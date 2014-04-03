@@ -15,6 +15,8 @@
     "jquery": true,
     "devel": true,
     "globals": {
+        "FormData": true,
+
         "before": false,
         "after": false,
         "it": false,
