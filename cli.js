@@ -15,7 +15,8 @@ program.version(pkg.version)
     .option('--disable-spf', 'Disable spf checking. The spf field in the webhook payload will be set to false.')
     .option('--disable-spam-score', 'Disable spam score computation. The spamScore field in the webhook payload will be set to 0.0.')
     .option('--verbose', 'Set the logging level to verbose.')
-    .option('--debug', 'Printout debug info such as the smtp commands.');
+    .option('--debug', 'Printout debug info such as the smtp commands.')
+    .option('--profile', 'Enable basic memory usage profiling.');
 
 /* Hack the argv object so that commander thinks that this script is called
  * 'mailin'. The help info will look nicer. */
@@ -31,7 +32,8 @@ mailin.start({
     disableSpf: program.disableSpf,
     disableSpamScore: program.disableSpamScore,
     verbose: program.verbose,
-    debug: program.debug
+    debug: program.debug,
+    profile: program.profile
 }, function (err) {
     if (err) process.exit(1);
 
