@@ -29,6 +29,7 @@ To handle the spam score computation, Mailin depends on spamassassin and its ser
 ```
 sudo aptitude install spamassassin spamc
 ```
+Spamassassin is not enabled by default, enable it in ```/etc/default/spamassassin```.
 
 ####The crux: setting up your DNS correctly
 
@@ -113,6 +114,7 @@ The webhook payload is a multipart form with a ```mailinMsg``` fields always pre
 #####Gotchas
 * ```error: listen EACCES```: your user do not have sufficients privileges to run on the given port. Ports under 1000 are restricted to root user. Try with [sudo](http://xkcd.com/149/).
 * ```error: listen EADDRINUSE```: the current port is already used by something. Most likely, you are trying to use port 25 and your machine's [mail transport agent](http://en.wikipedia.org/wiki/Message_transfer_agent) is already running. Stop it with something like ```sudo service exim4 stop``` or ```sudo service postfix stop``` before using Mailin.
+* ```error: Unable to compute spam score ECONNREFUSED```: it is likely that spamassassin is not enabled on your machine, check the ```/etc/default/spamassassin``` file.
 * ```node: command not found```: most likely, your system does not have node installed or it is installed with a different name. For instance on Debian/Ubuntu, the node interpreter is called nodejs. The quick fix is making a symlink: ```ln -s $(which nodejs) /usr/bin/node``` to make the node command available.
 
 ####Embedded inside a node application
