@@ -17,6 +17,9 @@ program.version(pkg.version)
     .option('--verbose', 'Set the logging level to verbose.')
     .option('--debug', 'Printout debug info such as the smtp commands.');
 
+/* Hack the argv object so that commander thinks that this script is called
+ * 'mailin'. The help info will look nicer. */
+process.argv[1] = 'mailin';
 program.parse(process.argv);
 
 logger.info('Mailin v' + pkg.version);
