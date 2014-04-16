@@ -7,8 +7,9 @@ var path = require('path');
 
 var pkg = require('./package.json');
 
+var restartCount = 0;
 var mailinProcess = new (forever.Monitor)(path.join(__dirname, 'cli.js'), {
-    max: 100,
+    max: 1000,
     minUptime: 10000,
     options: process.argv.slice(2)
 });
@@ -25,6 +26,10 @@ mailinProcess.on('restart', function () {
     logger.warn('It is likely that an error caused Mailin to crash.');
     logger.warn('Please report this to ' + pkg.bugs.url);
     logger.warn('Mailin restarted.');
+
+    ++restartCount;
+    logger.warn('Restart count: ' + restartCount);
+
     logger.info();
     logger.info();
 });
