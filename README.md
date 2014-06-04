@@ -3,7 +3,7 @@
 __Artisanal inbound emails for every web app__
 <img align="right" src="postman.jpg"/>
 
-Mailin is an smtp server that listen for emails, parse them and post them as json to the url of your choice.
+Mailin is an smtp server that listens for emails, parses them and posts them as json to the url of your choice.
 It checks the incoming emails [dkim](http://en.wikipedia.org/wiki/DomainKeys_Identified_Mail), [spf](http://en.wikipedia.org/wiki/Sender_Policy_Framework), spam score (using [spamassassin](http://spamassassin.apache.org/)) and tells you in which language the email is written.
 
 Mailin can be used as a standalone application directly from the command line, or embedded inside a node application.
@@ -11,6 +11,9 @@ Mailin can be used as a standalone application directly from the command line, o
 Mailin relies heavily on the excellent work of [@andris9](https://github.com/andris9) for the smtp and mail parsing services.
 
 Why? Because we needed it for our startup [jokund.com](http://jokund.com).
+
+### Show me a demo!
+Sure! A demo is live at [mailin.io](http://mailin.io). Please notice that it is running on the smallest Digital Ocean instance, so be fair if it is overloaded.
 
 ###Initial setup
 
@@ -33,10 +36,9 @@ Spamassassin is not enabled by default, enable it in ```/etc/default/spamassassi
 
 ####The crux: setting up your DNS correctly
 
-In order to receive emails, your smtp server address should be made available somewhere. Three records should be added to your DNS records. Let us pretend that we want to receive emails at ```*@subdomain.domain.com```:
-* Add an MX record: ```subdomain.domain.com MX 10 mxsubdomain.domain.com```. This means that the mail server for addresses like ```*@subdomain.domain.com``` will be ```mxsubdomain.domain.com```.
-* Add an A record: ```mxsubdomain.domain.com A the.ip.address.of.your.mailin.server```. This tells at which ip address the mail server can be found.
-* Finally, add a CNAME record for you email address domain: ```subdomain.domain.com CNAME mxsubdomain.domain.com```. Note that if we did the setup for a top level domain (no subdomain, email addresses such as ```*@domain.com```), this last record should have been an A record towards the real ip address of your mail server box (the same as the second record we set up).
+In order to receive emails, your smtp server address should be made available somewhere. Two records should be added to your DNS records. Let us pretend that we want to receive emails at ```*@subdomain.domain.com```:
+* First an MX record: ```subdomain.domain.com MX 10 mxsubdomain.domain.com```. This means that the mail server for addresses like ```*@subdomain.domain.com``` will be ```mxsubdomain.domain.com```.
+* Then an A record: ```mxsubdomain.domain.com A the.ip.address.of.your.mailin.server```. This tells at which ip address the mail server can be found.
 
 You can fire up Mailin (see next section) and use an [smtp server tester](http://mxtoolbox.com/diagnostic.aspx) to verify that everything is correct.
 
