@@ -1,30 +1,30 @@
 X-Mailer: Nodemailer 1.0
-From: andris@tr.ee
-To: andris@node.ee
+From: "Me" <me@jokund.com>
+To: "First Receiver" <first@jokund.com>, second@jokund.com
 Content-Type: multipart/mixed;
- boundary="----mailcomposer-?=_1-1395066415427"
+ boundary="----mailcomposer-?=_1-1402581589619"
 MIME-Version: 1.0
 
-------mailcomposer-?=_1-1395066415427
+------mailcomposer-?=_1-1402581589619
 Content-Type: multipart/alternative;
- boundary="----mailcomposer-?=_2-1395066415427"
+ boundary="----mailcomposer-?=_2-1402581589620"
 
-------mailcomposer-?=_2-1395066415427
+------mailcomposer-?=_2-1402581589620
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
 Hello world!
-------mailcomposer-?=_2-1395066415427
+------mailcomposer-?=_2-1402581589620
 Content-Type: text/html; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
 <b>Hello world!</b>
-------mailcomposer-?=_2-1395066415427--
+------mailcomposer-?=_2-1402581589620--
 
-------mailcomposer-?=_1-1395066415427
+------mailcomposer-?=_1-1402581589619
 Content-Type: text/plain; name="dummyFile.txt"
 Content-Disposition: attachment; filename="dummyFile.txt"
 Content-Transfer-Encoding: base64
 
 bXkgZHVtbXkgYXR0YWNobWVudCBjb250ZW50cw==
-------mailcomposer-?=_1-1395066415427--
+------mailcomposer-?=_1-1402581589619--

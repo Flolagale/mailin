@@ -8,8 +8,8 @@ mailcomposer.addHeader("x-mailer", "Nodemailer 1.0");
 
 // setup message data
 mailcomposer.setMessageOption({
-    from: "andris@tr.ee",
-    to: "andris@node.ee",
+    from: "Me <me@jokund.com>",
+    to: "First Receiver <first@jokund.com>, second@jokund.com",
     body: "Hello world!",
     html: "<b>Hello world!</b>"
 });
