@@ -107,7 +107,8 @@ The webhook payload is a multipart form with a ```mailinMsg``` fields always pre
       cc: [{
         address: 'james@mail.com',
         name: 'James'
-      }]
+      }],
+      connectionId: 'gez8t84g'
   },
   'dummyFile.txt': 'a-base64-encoded-string=='
 }
@@ -136,7 +137,8 @@ var mailin = require('mailin');
 mailin.on('startMessage', function (messageInfo) {
   /* messageInfo = {
       from: 'sender@somedomain.com',
-      to: 'someaddress@yourdomain.com'
+      to: 'someaddress@yourdomain.com',
+      connectionId: 't84h5ugf'
   }; */
   console.log(messageInfo);
 });
@@ -156,7 +158,7 @@ mailin.on('message', function (message) {
  *     disableWebhook: false,
  *     logFile: '/some/local/path'
  *  };
- * Here disale the webhook posting so that you can do what you want with the
+ * Here disable the webhook posting so that you can do what you want with the
  * parsed message. */
 mailin.start({
   port: 25,
