@@ -57,11 +57,7 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('test', [
-        'mochaTest'
-    ]);
-
-    grunt.registerTask('precommit', [
         'lint',
-        'test'
+        'mochaTest'
     ]);
 };
