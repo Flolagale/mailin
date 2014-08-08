@@ -104,6 +104,17 @@ describe('Mailin', function () {
                     // ]
                 }],
                 dkim: 'failed',
+                envelopeFrom: [{
+                    address: "me@jokund.com",
+                    name: ""
+                }],
+                envelopeTo: [{
+                    address: "first@jokund.com",
+                    name: ""
+                }, {
+                    address: "second@jokund.com",
+                    name: ""
+                }],
                 spf: 'failed',
                 spamScore: 3.3,
                 language: 'pidgin',
@@ -176,6 +187,17 @@ describe('Mailin', function () {
                         length: '28'
                     }],
                     dkim: 'failed',
+                    envelopeFrom: [{
+                        address: 'me@jokund.com',
+                        name: ''
+                    }],
+                    envelopeTo: [{
+                        address: 'first@jokund.com',
+                        name: ''
+                    }, {
+                        address: 'second@jokund.com',
+                        name: ''
+                    }],
                     spf: 'failed',
                     spamScore: 3.3,
                     language: 'pidgin',
