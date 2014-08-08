@@ -1,0 +1,8 @@
+X-Mailer: Nodemailer 1.0
+From: "Me" <me@jokund.com>
+To: to@jokund.com
+Content-Type: text/html
+
+<h1>Hello World</h1>
+<p>This is a line that needs to be at least a little longer than 80 characters so that we can check the character wrapping functionality.</p>
+<p>This is a test of a <a href="https://github.com/Flolagale/mailin">link</a>.</p>

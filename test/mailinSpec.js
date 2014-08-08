@@ -20,9 +20,15 @@ before(function (done) {
     });
 });
 
+beforeEach(function () {
+    mailin.removeAllListeners();
+});
+
 describe('Mailin', function () {
     it('should post a json to a webhook after receiving an email and trigger some events', function (done) {
         this.timeout(10000);
+
+        var doing = 2; // Number of async operations we need to wait for before calling done
 
         var expectedSpamScore = 3.3;
         if (!shell.which('spamassassin') || !shell.which('spamc')) {
@@ -40,7 +46,7 @@ describe('Mailin', function () {
 
         mailin.on('message', function (message) {
             console.log("Event 'message' triggered.");
-            console.log(message);
+            // console.log(message);
 
             message.attachments[0].content.toString().should.eql('my dummy attachment contents');
 
@@ -126,11 +132,12 @@ describe('Mailin', function () {
                 connectionId: connectionId
             });
 
-            // done();
+            doing--;
         });
 
         /* Make an http server to receive the webhook. */
-        var server = express();
+        var server = express(),
+            conn;
         server.use(server.router);
         server.head('/webhook', function (req, res) {
             res.send(200);
@@ -207,14 +214,18 @@ describe('Mailin', function () {
 
                 res.send(200);
 
-                /* Hacky timeout to make sure that the events had the time to be
-                 * triggered and handled. */
-                setTimeout(function () {
-                    done();
-                }, 1000);
+                doing--;
             });
+
+            var waiting = setInterval(function () {
+                if (!doing) {
+                    clearInterval(waiting);
+                    conn.close();
+                    done();
+                }
+            }, 1000);
         });
-        server.listen(3000, function (err) {
+        conn = server.listen(3000, function (err) {
             if (err) console.log(err);
             should.not.exist(err);
 
@@ -234,6 +245,31 @@ describe('Mailin', function () {
             client.on('message', function () {
                 fs.createReadStream('./test/fixtures/test.eml').pipe(client);
             });
+        });
+    });
+
+    it('should convert an HTML-only message to text', function (done) {
+        this.timeout(10000);
+
+        mailin.on('message', function (message) {
+            // console.log(message);
+            message.text.should.eql('HELLO WORLD\nThis is a line that needs to be at least a little longer than 80 characters so\nthat we can check the character wrapping functionality.\n\nThis is a test of a link [https://github.com/Flolagale/mailin] .');
+            done();
+        });
+
+        /* Make an smtp client to send an email. */
+        var client = simplesmtp.connect(2500);
+
+        /* Run only once as 'idle' is emitted again after message delivery. */
+        client.once('idle', function () {
+            client.useEnvelope({
+                from: 'envelopefrom@jokund.com',
+                to: 'envelopeto@jokund.com'
+            });
+        });
+
+        client.on('message', function () {
+            fs.createReadStream('./test/fixtures/test-html-only.eml').pipe(client);
         });
     });
 });
