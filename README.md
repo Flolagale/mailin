@@ -108,7 +108,9 @@ The webhook payload is a multipart form with a ```mailinMsg``` fields always pre
         address: 'james@mail.com',
         name: 'James'
       }],
-      connectionId: 'gez8t84g'
+      connectionId: 'gez8t84g',
+      envelopeFrom: [ { address: 'john.doe@somewhere.com', name: 'John Doe' } ],
+      envelopeTo: [ { address: 'jane.doe@somewhereelse.com', name: 'Jane Doe' } ]
   },
   'dummyFile.txt': 'a-base64-encoded-string=='
 }
