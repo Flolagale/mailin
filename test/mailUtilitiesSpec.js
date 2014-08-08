@@ -2,6 +2,7 @@
 'use strict';
 
 var fs = require('fs');
+var shell = require('shelljs');
 var mailUtilities = require('../lib/mailUtilities');
 
 var should = null;
@@ -20,6 +21,11 @@ describe('The mail signature verfier', function () {
         });
 
     it('should be able to compute a spam score for an email', function (done) {
+        if (!shell.which('spamassassin') || !shell.which('spamc')) {
+            console.warn('Spamassassin is not installed. Skipping spam score test.');
+            return done();
+        }
+
         var email = fs.readFileSync('./test/fixtures/test.eml').toString();
         mailUtilities.computeSpamScore(email, function (err, result) {
             if (err) console.log(err);

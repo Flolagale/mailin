@@ -43,7 +43,8 @@
     "shelljs": "^0.2.6",
     "simplesmtp": "^0.3.23",
     "spamc": "0.0.3",
-    "winston": "^0.7.2"
+    "winston": "^0.7.2",
+    "mimelib": ">=0.2.17"
   },
   "devDependencies": {
     "express": "^3.4.8",

@@ -6,6 +6,7 @@ var fs = require('fs');
 var mailin = require('../lib/mailin');
 var multiparty = require('multiparty');
 var simplesmtp = require('simplesmtp');
+var shell = require('shelljs');
 
 var should = null;
 should = require('should');
@@ -22,6 +23,12 @@ before(function (done) {
 describe('Mailin', function () {
     it('should post a json to a webhook after receiving an email and trigger some events', function (done) {
         this.timeout(10000);
+
+        var expectedSpamScore = 3.3;
+        if (!shell.which('spamassassin') || !shell.which('spamc')) {
+            console.warn('Spamassassin is not installed. Skipping spam score test.');
+            expectedSpamScore = 0;
+        }
 
         /* Add listeners to the events. */
         var connectionId = null;
@@ -104,8 +111,19 @@ describe('Mailin', function () {
                     // ]
                 }],
                 dkim: 'failed',
+                envelopeFrom: [{
+                    address: "me@jokund.com",
+                    name: ""
+                }],
+                envelopeTo: [{
+                    address: "first@jokund.com",
+                    name: ""
+                }, {
+                    address: "second@jokund.com",
+                    name: ""
+                }],
                 spf: 'failed',
-                spamScore: 3.3,
+                spamScore: expectedSpamScore,
                 language: 'pidgin',
                 cc: [],
                 connectionId: connectionId
@@ -176,8 +194,19 @@ describe('Mailin', function () {
                         length: '28'
                     }],
                     dkim: 'failed',
+                    envelopeFrom: [{
+                        address: 'me@jokund.com',
+                        name: ''
+                    }],
+                    envelopeTo: [{
+                        address: 'first@jokund.com',
+                        name: ''
+                    }, {
+                        address: 'second@jokund.com',
+                        name: ''
+                    }],
                     spf: 'failed',
-                    spamScore: 3.3,
+                    spamScore: expectedSpamScore,
                     language: 'pidgin',
                     cc: []
                 });
