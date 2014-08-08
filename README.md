@@ -1,4 +1,4 @@
-#Mailin
+#Mailin [![Build Status](https://travis-ci.org/Flolagale/mailin.svg?branch=master)](https://travis-ci.org/Flolagale/mailin)
 
 __Artisanal inbound emails for every web app__
 <img align="right" src="postman.jpg"/>
@@ -156,7 +156,8 @@ mailin.on('message', function (message) {
  *     port: 25,
  *     webhook: 'http://mydomain.com/mailin/incoming,
  *     disableWebhook: false,
- *     logFile: '/some/local/path'
+ *     logFile: '/some/local/path',
+ *     logLevel: 'warn' // One of silly, info, debug, warn, error
  *  };
  * Here disable the webhook posting so that you can do what you want with the
  * parsed message. */

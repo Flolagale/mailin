@@ -4,6 +4,7 @@
 var express = require('express');
 var fs = require('fs');
 var mailin = require('../lib/mailin');
+var multiparty = require('multiparty');
 var simplesmtp = require('simplesmtp');
 
 var should = null;
@@ -11,7 +12,7 @@ should = require('should');
 
 before(function (done) {
     mailin.start({
-        verbose: true
+        verbose: true,
     }, function (err) {
         should.not.exist(err);
         done();
@@ -115,7 +116,6 @@ describe('Mailin', function () {
 
         /* Make an http server to receive the webhook. */
         var server = express();
-        server.use(express.bodyParser());
         server.use(server.router);
         server.head('/webhook', function (req, res) {
             res.send(200);
@@ -123,64 +123,73 @@ describe('Mailin', function () {
         server.post('/webhook', function (req, res) {
             console.log('Receiving webhook.');
 
-            should.exist(req.body);
-            should.exist(req.body.mailinMsg);
-            should.exist(req.body['dummyFile.txt']);
+            var form = new multiparty.Form();
+            form.parse(req, function (err, fields, files) {
+                if (err) console.log(err.stack);
+                should.not.exist(err);
 
-            var mailinMsg = JSON.parse(req.body.mailinMsg);
+                should.exist(files);
+                Object.keys(files).length.should.eql(0);
 
-            /* Delete the headers that include a timestamp. */
-            delete mailinMsg.headers.received;
+                should.exist(fields);
+                should.exist(fields.mailinMsg);
+                should.exist(fields['dummyFile.txt']);
 
-            /* And the connection id, which is random. */
-            delete mailinMsg.connectionId;
+                var mailinMsg = JSON.parse(fields.mailinMsg);
 
-            mailinMsg.should.eql({
-                html: '<b>Hello world!</b>',
-                text: 'Hello world!',
-                headers: {
-                    'x-mailer': 'Nodemailer 1.0',
-                    from: '"Me" <me@jokund.com>',
-                    to: '"First Receiver" <first@jokund.com>, second@jokund.com',
-                    'content-type': 'multipart/mixed; boundary="----mailcomposer-?=_1-1402581589619"',
-                    'mime-version': '1.0'
-                },
-                priority: 'normal',
-                from: [{
-                    address: 'me@jokund.com',
-                    name: 'Me'
-                }],
-                to: [{
-                    address: 'first@jokund.com',
-                    name: 'First Receiver'
-                }, {
-                    address: 'second@jokund.com',
-                    name: ''
-                }],
-                attachments: [{
-                    contentType: 'text/plain',
-                    fileName: 'dummyFile.txt',
-                    contentDisposition: 'attachment',
-                    transferEncoding: 'base64',
-                    generatedFileName: 'dummyFile.txt',
-                    contentId: '6e4a9c577e603de61e554abab84f6297@mailparser',
-                    checksum: 'e9fa6319356c536b962650eda9399a44',
-                    length: '28'
-                }],
-                dkim: 'failed',
-                spf: 'failed',
-                spamScore: 3.3,
-                language: 'pidgin',
-                cc: []
+                /* Delete the headers that include a timestamp. */
+                delete mailinMsg.headers.received;
+
+                /* And the connection id, which is random. */
+                delete mailinMsg.connectionId;
+
+                mailinMsg.should.eql({
+                    html: '<b>Hello world!</b>',
+                    text: 'Hello world!',
+                    headers: {
+                        'x-mailer': 'Nodemailer 1.0',
+                        from: '"Me" <me@jokund.com>',
+                        to: '"First Receiver" <first@jokund.com>, second@jokund.com',
+                        'content-type': 'multipart/mixed; boundary="----mailcomposer-?=_1-1402581589619"',
+                        'mime-version': '1.0'
+                    },
+                    priority: 'normal',
+                    from: [{
+                        address: 'me@jokund.com',
+                        name: 'Me'
+                    }],
+                    to: [{
+                        address: 'first@jokund.com',
+                        name: 'First Receiver'
+                    }, {
+                        address: 'second@jokund.com',
+                        name: ''
+                    }],
+                    attachments: [{
+                        contentType: 'text/plain',
+                        fileName: 'dummyFile.txt',
+                        contentDisposition: 'attachment',
+                        transferEncoding: 'base64',
+                        generatedFileName: 'dummyFile.txt',
+                        contentId: '6e4a9c577e603de61e554abab84f6297@mailparser',
+                        checksum: 'e9fa6319356c536b962650eda9399a44',
+                        length: '28'
+                    }],
+                    dkim: 'failed',
+                    spf: 'failed',
+                    spamScore: 3.3,
+                    language: 'pidgin',
+                    cc: []
+                });
+
+                res.send(200);
+
+                /* Hacky timeout to make sure that the events had the time to be
+                 * triggered and handled. */
+                setTimeout(function () {
+                    done();
+                }, 1000);
             });
-
-            res.send(200);
-
-            /* Hacky timeout to make sure that the events had the time to be
-             * triggered and handled. */
-            setTimeout(function () {
-                done();
-            }, 1000);
         });
         server.listen(3000, function (err) {
             if (err) console.log(err);
