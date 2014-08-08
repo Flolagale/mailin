@@ -112,14 +112,11 @@ describe('Mailin', function () {
                 }],
                 dkim: 'failed',
                 envelopeFrom: [{
-                    address: "me@jokund.com",
+                    address: "envelopefrom@jokund.com",
                     name: ""
                 }],
                 envelopeTo: [{
-                    address: "first@jokund.com",
-                    name: ""
-                }, {
-                    address: "second@jokund.com",
+                    address: "envelopeto@jokund.com",
                     name: ""
                 }],
                 spf: 'failed',
@@ -195,14 +192,11 @@ describe('Mailin', function () {
                     }],
                     dkim: 'failed',
                     envelopeFrom: [{
-                        address: 'me@jokund.com',
+                        address: 'envelopefrom@jokund.com',
                         name: ''
                     }],
                     envelopeTo: [{
-                        address: 'first@jokund.com',
-                        name: ''
-                    }, {
-                        address: 'second@jokund.com',
+                        address: 'envelopeto@jokund.com',
                         name: ''
                     }],
                     spf: 'failed',
@@ -232,8 +226,8 @@ describe('Mailin', function () {
             /* Run only once as 'idle' is emitted again after message delivery. */
             client.once('idle', function () {
                 client.useEnvelope({
-                    from: 'me@jokund.com',
-                    to: ['first@jokund.com', 'second@jokund.com']
+                    from: 'envelopefrom@jokund.com',
+                    to: 'envelopeto@jokund.com'
                 });
             });
 
