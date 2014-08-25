@@ -159,7 +159,10 @@ mailin.on('message', function (message) {
  *     webhook: 'http://mydomain.com/mailin/incoming,
  *     disableWebhook: false,
  *     logFile: '/some/local/path',
- *     logLevel: 'warn' // One of silly, info, debug, warn, error
+ *     logLevel: 'warn', // One of silly, info, debug, warn, error
+ *     smtpOptions: { // Set of options directly passed to simplesmtp.createServer(smtpOptions)
+ *        SMTPBanner: 'Hi from a custom Mailin instance'
+ *     }
  *  };
  * Here disable the webhook posting so that you can do what you want with the
  * parsed message. */
