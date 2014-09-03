@@ -109,6 +109,7 @@ The webhook payload is a multipart form with a ```mailinMsg``` fields always pre
         name: 'James'
       }],
       connectionId: 'gez8t84g',
+      authentication: { username: null, authenticated: false },
       envelopeFrom: [ { address: 'john.doe@somewhere.com', name: 'John Doe' } ],
       envelopeTo: [ { address: 'jane.doe@somewhereelse.com', name: 'Jane Doe' } ]
   },
@@ -140,7 +141,9 @@ mailin.on('startMessage', function (messageInfo) {
   /* messageInfo = {
       from: 'sender@somedomain.com',
       to: 'someaddress@yourdomain.com',
-      connectionId: 't84h5ugf'
+      connectionId: 't84h5ugf',
+      authentication: { username: null, authenticated: false }
+    }
   }; */
   console.log(messageInfo);
 });
