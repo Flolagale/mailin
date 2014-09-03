@@ -38,10 +38,12 @@ describe('Mailin', function () {
 
         /* Add listeners to the events. */
         var connectionId = null;
+        var authentication = null;
         mailin.on('startMessage', function (messageInfo) {
             console.log("Event 'startMessage' triggered.");
             console.log(messageInfo);
             connectionId = messageInfo.connectionId;
+            authentication = messageInfo.authentication;
         });
 
         mailin.on('message', function (message) {
@@ -129,7 +131,8 @@ describe('Mailin', function () {
                 spamScore: expectedSpamScore,
                 language: 'pidgin',
                 cc: [],
-                connectionId: connectionId
+                connectionId: connectionId,
+                authentication: authentication
             });
 
             doing--;
@@ -209,7 +212,8 @@ describe('Mailin', function () {
                     spf: 'failed',
                     spamScore: expectedSpamScore,
                     language: 'pidgin',
-                    cc: []
+                    cc: [],
+                    authentication: { username: null, authenticated: false }
                 });
 
                 res.send(200);
