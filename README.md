@@ -136,13 +136,16 @@ Start the Mailin server and listen to events.
 var mailin = require('mailin');
 
 /* Event emitted when a connection with the Mailin smtp server is initiated. */
-mailin.on('startMessage', function (messageInfo) {
-  /* messageInfo = {
+mailin.on('startMessage', function (connection) {
+  /* connection = {
       from: 'sender@somedomain.com',
       to: 'someaddress@yourdomain.com',
-      connectionId: 't84h5ugf'
+      id: 't84h5ugf',
+      authentication: { username: 'johnsmith', authenticated: true, state: 'AUTHENTICATED' }
+      ...
+      ,
   }; */
-  console.log(messageInfo);
+  console.log(connection);
 });
 
 /* Event emitted after a message was received and parsed.
