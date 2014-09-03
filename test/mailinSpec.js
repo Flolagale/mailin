@@ -41,7 +41,7 @@ describe('Mailin', function () {
         mailin.on('startMessage', function (messageInfo) {
             console.log("Event 'startMessage' triggered.");
             console.log(messageInfo);
-            connectionId = messageInfo.connectionId;
+            connectionId = messageInfo.id;
         });
 
         mailin.on('message', function (message) {
