@@ -173,6 +173,15 @@ mailin.start({
   port: 25,
   disableWebhook: true // Disable the webhook posting.
 });
+
+/* Access simplesmtp server instance. */
+mailin.smtp.on('authorizeUser', function(connection, username, password, done) {
+  if (username == "johnsmith" && password == "mysecret") {
+    done(null, true);
+  } else {
+    done(new Error("Unauthorized!"), false);
+  }
+});
 ```
 
 ###Todo
