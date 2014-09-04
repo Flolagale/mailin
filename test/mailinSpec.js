@@ -1,6 +1,7 @@
 /* jshint expr: true */
 'use strict';
 
+var _ = require('lodash');
 var express = require('express');
 var fs = require('fs');
 var mailin = require('../lib/mailin');
@@ -37,25 +38,23 @@ describe('Mailin', function () {
         }
 
         /* Add listeners to the events. */
-        var connectionId = null;
-        var authentication = null;
-        mailin.on('startMessage', function (messageInfo) {
+        var connData = null;
+        mailin.on('startMessage', function (connection) {
             console.log("Event 'startMessage' triggered.");
-            console.log(messageInfo);
-            connectionId = messageInfo.connectionId;
-            authentication = messageInfo.authentication;
+            connData = _.pick(connection, ['from', 'to', 'remoteAddress', 'authentication', 'id']);
+            console.log(connData);
         });
 
-        mailin.on('message', function (message) {
+        mailin.on('message', function (connection, data) {
             console.log("Event 'message' triggered.");
-            // console.log(message);
+            // console.log(data);
 
-            message.attachments[0].content.toString().should.eql('my dummy attachment contents');
+            data.attachments[0].content.toString().should.eql('my dummy attachment contents');
 
             /* Delete the headers that include a timestamp. */
-            delete message.headers.received;
+            delete data.headers.received;
 
-            message.should.eql({
+            data.should.eql({
                 html: '<b>Hello world!</b>',
                 text: 'Hello world!',
                 headers: {
@@ -131,8 +130,7 @@ describe('Mailin', function () {
                 spamScore: expectedSpamScore,
                 language: 'pidgin',
                 cc: [],
-                connectionId: connectionId,
-                authentication: authentication
+                connection: connData
             });
 
             doing--;
@@ -166,7 +164,7 @@ describe('Mailin', function () {
                 delete mailinMsg.headers.received;
 
                 /* And the connection id, which is random. */
-                delete mailinMsg.connectionId;
+                delete mailinMsg.data;
 
                 mailinMsg.should.eql({
                     html: '<b>Hello world!</b>',
@@ -213,7 +211,7 @@ describe('Mailin', function () {
                     spamScore: expectedSpamScore,
                     language: 'pidgin',
                     cc: [],
-                    authentication: { username: null, authenticated: false }
+                    connection: connData
                 });
 
                 res.send(200);
@@ -255,9 +253,9 @@ describe('Mailin', function () {
     it('should convert an HTML-only message to text', function (done) {
         this.timeout(10000);
 
-        mailin.on('message', function (message) {
-            // console.log(message);
-            message.text.should.eql('HELLO WORLD\nThis is a line that needs to be at least a little longer than 80 characters so\nthat we can check the character wrapping functionality.\n\nThis is a test of a link [https://github.com/Flolagale/mailin] .');
+        mailin.on('message', function (connection, data) {
+            // console.log(data);
+            data.text.should.eql('HELLO WORLD\nThis is a line that needs to be at least a little longer than 80 characters so\nthat we can check the character wrapping functionality.\n\nThis is a test of a link [https://github.com/Flolagale/mailin] .');
             done();
         });
 
