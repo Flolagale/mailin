@@ -174,7 +174,9 @@ mailin.start({
   disableWebhook: true // Disable the webhook posting.
 });
 
-/* Access the underlying simplesmtp server instance. */
+/* Access the underlying simplesmtp server instance.
+ * Pay attention, this instance is available only _after_ that mailin.start()
+ * has been called. This is a bit fragile and might change in future releases. */
 mailin.smtp.on('authorizeUser', function(connection, username, password, done) {
   if (username == "johnsmith" && password == "mysecret") {
     done(null, true);
