@@ -100,6 +100,13 @@ The webhook payload is a multipart form with a ```mailinMsg``` fields always pre
           checksum: 'e9fa6319356c536b962650eda9399a44',
           length: '28'
       }],
+      connection:
+        from: 'John Doe <john.doe@somewhere.com>',
+        to: ['Jane Doe <jane.doe@somewhereelse.com>'],
+        remoteAddress: '91.142.31.23',
+        authentication: { username: false, authenticated: false, state: 'NORMAL' },
+        id: '0e9b7099'
+      },
       dkim: 'failed',
       spf: 'pass',
       spamScore: 3.3,
@@ -108,8 +115,6 @@ The webhook payload is a multipart form with a ```mailinMsg``` fields always pre
         address: 'james@mail.com',
         name: 'James'
       }],
-      connectionId: 'gez8t84g',
-      authentication: { username: null, authenticated: false },
       envelopeFrom: [ { address: 'john.doe@somewhere.com', name: 'John Doe' } ],
       envelopeTo: [ { address: 'jane.doe@somewhereelse.com', name: 'Jane Doe' } ]
   },
@@ -136,27 +141,7 @@ Start the Mailin server and listen to events.
 ```javascript
 var mailin = require('mailin');
 
-/* Event emitted when a connection with the Mailin smtp server is initiated. */
-mailin.on('startMessage', function (messageInfo) {
-  /* messageInfo = {
-      from: 'sender@somedomain.com',
-      to: 'someaddress@yourdomain.com',
-      connectionId: 't84h5ugf',
-      authentication: { username: null, authenticated: false }
-    }
-  }; */
-  console.log(messageInfo);
-});
-
-/* Event emitted after a message was received and parsed.
- * The message parameters contains the parsed email. */
-mailin.on('message', function (message) {
-  console.log(message);
-  /* Do something useful with the parsed message here.
-   * Use it directly or modify it and post it to a webhook. */
-});
-
-/* Start the Mailin server. The available options are: 
+/* Start the Mailin server. The available options are:
  *  options = {
  *     port: 25,
  *     webhook: 'http://mydomain.com/mailin/incoming,
@@ -174,20 +159,48 @@ mailin.start({
   disableWebhook: true // Disable the webhook posting.
 });
 
-/* Access the underlying simplesmtp server instance.
- * Pay attention, this instance is available only _after_ that mailin.start()
- * has been called. This is a bit fragile and might change in future releases. */
-mailin.smtp.on('authorizeUser', function(connection, username, password, done) {
+/* Access simplesmtp server instance. */
+mailin.on('authorizeUser', function(connection, username, password, done) {
   if (username == "johnsmith" && password == "mysecret") {
     done(null, true);
   } else {
     done(new Error("Unauthorized!"), false);
   }
 });
+
+/* Event emitted when a connection with the Mailin smtp server is initiated. */
+mailin.on('startMessage', function (connection) {
+  /* connection = {
+      from: 'sender@somedomain.com',
+      to: 'someaddress@yourdomain.com',
+      id: 't84h5ugf',
+      authentication: { username: null, authenticated: false, status: 'NORMAL' }
+    }
+  }; */
+  console.log(connection);
+});
+
+/* Event emitted after a message was received and parsed. */
+mailin.on('message', function (connection, data, content) {
+  console.log(data);
+  /* Do something useful with the parsed message here.
+   * Use parsed message `data` directly or use raw message `content`. */
+});
 ```
 
-###Todo
-If webhook fails, schedule some retries.
+##### Events
 
+  * **startData** *(connection)* - DATA stream is opened by the client.
+  * **data** *(connection, chunk)* - E-mail data chunk is passed from the client.
+  * **dataReady** *(connection, callback)* - Client has finished passing e-mail data. `callback` returns the queue id to the client.
+  * **authorizeUser** *(connection, username, password, callback)* - Emitted if `requireAuthentication` option is set to true. `callback` has two parameters *(err, success)* where `success` is a Boolean and should be true, if user is authenticated successfully.
+  * **validateSender** *(connection, email, callback)* - Emitted if `validateSender` listener is set up.
+  * **validateRecipient** *(connection, email, callback)* - Emitted if `validataRecipients` listener is set up.
+  * **close** *(connection)* - Emitted when the connection to a client is closed.
+  * **startMessage** *(connection)* - Connection with the Mailin smtp server is initiated.
+  * **message** *(connection, data, content)* - Message was received and parsed.
+
+### Todo
+If webhook fails, schedule some retries.
 
 Notice: Postman image copyright [Charlie Allen](http://charlieallensblog.blogspot.fr)
