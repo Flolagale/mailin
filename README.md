@@ -195,7 +195,7 @@ mailin.on('message', function (connection, data, content) {
   * **dataReady** *(connection, callback)* - Client has finished passing e-mail data. `callback` returns the queue id to the client.
   * **authorizeUser** *(connection, username, password, callback)* - Emitted if `requireAuthentication` option is set to true. `callback` has two parameters *(err, success)* where `success` is a Boolean and should be true, if user is authenticated successfully.
   * **validateSender** *(connection, email, callback)* - Emitted if `validateSender` listener is set up.
-  * **validateRecipient** *(connection, email, callback)* - Emitted if `validataRecipients` listener is set up.
+  * **validateRecipient** *(connection, email, callback)* - Emitted if `validateRecipients` listener is set up.
   * **close** *(connection)* - Emitted when the connection to a client is closed.
   * **startMessage** *(connection)* - Connection with the Mailin smtp server is initiated.
   * **message** *(connection, data, content)* - Message was received and parsed.
