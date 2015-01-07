@@ -63,7 +63,7 @@ Here comes a [tutorial on how to setup authbind](http://respectthecode.tumblr.co
 ```
 authbind --deep mailin --webhook http://mydomain.com/incoming_emails
 ```
-and make sure the your user can write to the log file.
+and make sure that your user can write to the log file.
 
 At this point, Mailin will listen for incoming emails, parse them and post an urlencoded form ```multipart/form-data``` to your webhook url.
 
