@@ -13,7 +13,7 @@ Mailin relies heavily on the excellent work of [@andris9](https://github.com/and
 Why? Because we needed it for our startup [jokund.com](http://jokund.com).
 
 ### Show me a demo!
-Sure! A demo is live at [mailin.io](http://mailin.io). Please notice that it is running on the smallest Digital Ocean instance, so be fair if it is overloaded.
+Sure! A demo is live at [mailin.io](http://mailin.io). Please note that it is running on the smallest Digital Ocean instance, so be fair if it is overloaded.
 
 ###Initial setup
 
@@ -68,7 +68,7 @@ and make sure that your user can write to the log file.
 At this point, Mailin will listen for incoming emails, parse them and post an urlencoded form ```multipart/form-data``` to your webhook url.
 
 #####Webhook format
-The webhook payload is a multipart form with a ```mailinMsg``` fields always present and some optionnal additional fields containing the content of the attachements. How to handle this? We got you covered, there is a working example using node and express in [mailin/test/utils/server.js](https://github.com/Flolagale/mailin/blob/master/test/utils/server.js). Anyway, once parsed, you should end up with something like:
+The webhook payload is a multipart form with a ```mailinMsg``` fields always present and some optional additional fields containing the content of the attachments. How to handle this? We have got you covered, there is a working example using node and express in [mailin/test/utils/server.js](https://github.com/Flolagale/mailin/blob/master/test/utils/server.js). Anyway, once parsed, you should end up with something like:
 ```
 {
   mailinMsg:
