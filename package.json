@@ -1,6 +1,6 @@
 {
   "name": "mailin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Artisanal inbound emails for every web app",
   "main": "index.js",
   "bin": {
