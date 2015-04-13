@@ -274,4 +274,88 @@ describe('Mailin', function () {
             fs.createReadStream('./test/fixtures/test-html-only.eml').pipe(client);
         });
     });
+
+    it('should not validate sender domain DNS by default', function (done) {
+        this.timeout(10000);
+
+        mailin.on('message', function (connection, data) {
+            data.html.should.eql('<b>Hello world!</b>');
+            done();
+        });
+
+        /* Make an smtp client to send an email. */
+        var client = simplesmtp.connect(2500);
+
+        /* Run only once as 'idle' is emitted again after message delivery. */
+        client.once('idle', function () {
+            client.useEnvelope({
+                from: 'envelopefrom@foo.fifoo',
+                to: 'envelopeto@foo.fifoo'
+            });
+        });
+
+        client.on('message', function () {
+            fs.createReadStream('./test/fixtures/test.eml').pipe(client);
+        });
+    });
+
+    /* This test should run as the last test since it restarts mailin with
+     * different options. */
+    it('should validate sender domain DNS if requested', function (done) {
+        this.timeout(10000);
+
+        mailin.stop(function (err) {
+            if (err) console.log(err);
+            should.not.exist(err);
+
+            mailin.start({
+                smtpOptions: {
+                    disableDNSValidation: false
+                }
+            }, function (err) {
+                if (err) console.log(err);
+                should.not.exist(err);
+
+                var doneEvents = [];
+                var registerDoneEvent = function (eventName) {
+                    doneEvents.push(eventName);
+
+                    /* Call done if all the events of the test have been called. */
+                    var shouldCallDone = ['senderValidationFailed', 'error'].every(function (eventName) {
+                        return _.contains(doneEvents, eventName);
+                    });
+
+                    if (shouldCallDone) return done();
+                };
+
+                mailin.on('senderValidationFailed', function (err) {
+                    should.exist(err);
+                    err.should.equal('envelopefrom@foo.fifoo');
+                    registerDoneEvent('senderValidationFailed');
+                });
+
+                /* Make an smtp client to send an email. */
+                var client = simplesmtp.connect(2500);
+
+                /* Run only once as 'idle' is emitted again after message delivery. */
+                client.once('idle', function () {
+                    client.useEnvelope({
+                        from: 'envelopefrom@foo.fifoo',
+                        to: 'envelopeto@foo.fifoo'
+                    });
+                });
+
+                client.on('error', function (err) {
+                    should.exist(err);
+                    console.log(err);
+                    err.data.indexOf('Sender address rejected: Domain not found').should.not.equal(-1);
+                    registerDoneEvent('error');
+                });
+
+                client.on('message', function () {
+                    fs.createReadStream('./test/fixtures/test.eml').pipe(client);
+                });
+            });
+        });
+    });
 });

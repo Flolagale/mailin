@@ -127,6 +127,8 @@ The webhook payload is a multipart form with a ```mailinMsg``` fields always pre
 * ```error: listen EADDRINUSE```: the current port is already used by something. Most likely, you are trying to use port 25 and your machine's [mail transport agent](http://en.wikipedia.org/wiki/Message_transfer_agent) is already running. Stop it with something like ```sudo service exim4 stop``` or ```sudo service postfix stop``` before using Mailin.
 * ```error: Unable to compute spam score ECONNREFUSED```: it is likely that spamassassin is not enabled on your machine, check the ```/etc/default/spamassassin``` file.
 * ```node: command not found```: most likely, your system does not have node installed or it is installed with a different name. For instance on Debian/Ubuntu, the node interpreter is called nodejs. The quick fix is making a symlink: ```ln -s $(which nodejs) /usr/bin/node``` to make the node command available.
+* ```Uncaught SenderError: Mail from command failed - 450 4.1.8 <envelopefrom@foo.fifoo>: Sender address rejected: Domain not found
+```
 
 ####Embedded inside a node application
 
