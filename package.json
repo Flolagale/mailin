@@ -46,8 +46,7 @@
     "simplesmtp": "^0.3.32",
     "spamc": "0.0.3",
     "winston": "^0.7.3",
-		"detect-encoding": "^0.0.3",
-		"iconv": "^2.1.6"
+    "iconv": "^2.1.6"
   },
   "devDependencies": {
     "express": "^3.4.8",
