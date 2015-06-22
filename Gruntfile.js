@@ -2,7 +2,7 @@
 
 var fs = require('fs');
 
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
     // Load .jshintrc file.
     var hintOptions = JSON.parse(fs.readFileSync('.jshintrc', 'utf8'));
