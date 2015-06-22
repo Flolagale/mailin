@@ -18,7 +18,11 @@ should = chai.Should();
 
 before(function (done) {
     mailin.start({
-        verbose: true
+        verbose: true,
+        smtpOptions: {
+            disabledCommands: ['AUTH'],
+            secure: false
+        }
     }, function (err) {
         should.not.exist(err);
         done();
@@ -299,7 +303,7 @@ describe('Mailin', function () {
     /* This test should run as the last test since it restarts mailin with
      * different options. */
     it('should validate sender domain DNS if requested', function (done) {
-        this.timeout(9000000);
+        this.timeout(10000);
 
         mailin.stop(function (err) {
             try {
@@ -310,7 +314,11 @@ describe('Mailin', function () {
             }
 
             mailin.start({
-                disableDNSValidation: false
+                disableDnsValidation: false,
+                smtpOptions: {
+                    disabledCommands: ['AUTH'],
+                    secure: false
+                }
             }, function (err) {
                 try {
                     if (err) console.log(err);
@@ -329,6 +337,7 @@ describe('Mailin', function () {
                 };
 
                 mailin.on('senderValidationFailed', function (err){
+                    err = err || undefined;
                     try {
                         should.exist(err);
                         err.should.equal('envelopefrom@foo.fifoo');
@@ -344,14 +353,8 @@ describe('Mailin', function () {
                     ignoreTLS: true
                 });
 
-                client.connect(function() {
-                    client.send({
-                        from: {name: 'Me', address: 'envelopefrom@foo.fifoo'},
-                        to: [{name: 'First Receiver', address: 'first@jokund.com'}, {name: '', address: 'second@jokund.com'}]
-                    }, fs.createReadStream('./test/fixtures/test.eml'), function(){});
-                });
-
-                client.on('error', function (err){
+                var errorFunction = function(err) {
+                    err = err || undefined;
                     try {
                         should.exist(err);
                         console.log(err);
@@ -360,8 +363,14 @@ describe('Mailin', function () {
                     } catch (e) {
                         return done(e);
                     }
-                });
+                };
 
+                client.connect(function() {
+                    client.send({
+                        from: {name: 'Me', address: 'envelopefrom@foo.fifoo'},
+                        to: [{name: 'First Receiver', address: 'first@jokund.com'}, {name: '', address: 'second@jokund.com'}]
+                    }, fs.createReadStream('./test/fixtures/test.eml'), errorFunction);
+                });
             });
         });
     });

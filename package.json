@@ -7,7 +7,7 @@
     "mailin": "./run-cli.js"
   },
   "scripts": {
-    "test": "node -e \"require('grunt').tasks(['test']);\"",
+    "test": "node -e \"require('grunt').tasks(['mochaTest']);\"",
     "start": "./run-cli.js"
   },
   "repository": {

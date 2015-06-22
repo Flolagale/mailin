@@ -5,6 +5,21 @@ var logger = require('./lib/logger');
 var mailin = require('./lib/mailin');
 var program = require('commander');
 
+function collectOptions(keyValue, options) {
+    if (!keyValue || keyValue.indexOf(':') < 0) {
+        logger.error('Ignoring option '  + keyValue);
+        return options;
+    }
+    options = options || {};
+    var split = keyValue.split(':');
+    options[split[0]] = split[1];
+    return options;
+}
+
+function list(val) {
+    return val.split(',');
+}
+
 var pkg = require('./package.json');
 
 program.version(pkg.version)
@@ -16,7 +31,10 @@ program.version(pkg.version)
     .option('--disable-spam-score', 'Disable spam score computation. The spamScore field in the webhook payload will be set to 0.0.')
     .option('--verbose', 'Set the logging level to verbose.')
     .option('--debug', 'Printout debug info such as the smtp commands.')
-    .option('--profile', 'Enable basic memory usage profiling.');
+    .option('--profile', 'Enable basic memory usage profiling.')
+    .option('--enable-dns-validation', 'Disable DNS domain lookup')
+    .option('--disabled-smtp-commands [value]', 'smtp disabled commands list, comma separated', list)
+    .option('--smtp [value]', 'smtp options split with :, check https://github.com/andris9/smtp-server/tree/v1.4.0', collectOptions, {});
 
 /* Hack the argv object so that commander thinks that this script is called
  * 'mailin'. The help info will look nicer. */
@@ -24,6 +42,10 @@ process.argv[1] = 'mailin';
 program.parse(process.argv);
 
 logger.info('Mailin v' + pkg.version);
+
+var smtpOptions = program.smtp;
+smtpOptions.disabledCommands = program.disabledSmtpCommands;
+
 mailin.start({
     port: program.port || 25,
     webhook: program.webhook || 'http://localhost:3000/webhook',
@@ -33,7 +55,9 @@ mailin.start({
     disableSpamScore: program.disableSpamScore,
     verbose: program.verbose,
     debug: program.debug,
-    profile: program.profile
+    profile: program.profile,
+    disableDNSValidation: !program.enableDnsValidation,
+    smtpOptions: smtpOptions
 }, function (err) {
     if (err) process.exit(1);
 
