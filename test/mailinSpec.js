@@ -35,7 +35,7 @@ beforeEach(function () {
 
 describe('Mailin', function () {
     it('should post a json to a webhook after receiving an email and trigger some events', function (done) {
-        this.timeout(10000);
+        this.timeout(30000);
 
         var doing = 2; // Number of async operations we need to wait for before calling done
 

@@ -61,11 +61,11 @@ mailin.start({
 }, function (err) {
     if (err) process.exit(1);
 
-    logger.info('Webhook url: ' + mailin.options.webhook);
+    logger.info('Webhook url: ' + mailin.configuration.webhook);
 
-    if (mailin.options.logFile) logger.info('Log file: ' + mailin.options.logFile);
+    if (mailin.configuration.logFile) logger.info('Log file: ' + mailin.configuration.logFile);
 
-    if (mailin.options.disableDkim) logger.info('Dkim checking is disabled');
-    if (mailin.options.disableSpf) logger.info('Spf checking is disabled');
-    if (mailin.options.disableSpamScore) logger.info('Spam score computation is disabled');
+    if (mailin.configuration.disableDkim) logger.info('Dkim checking is disabled');
+    if (mailin.configuration.disableSpf) logger.info('Spf checking is disabled');
+    if (mailin.configuration.disableSpamScore) logger.info('Spam score computation is disabled');
 });
