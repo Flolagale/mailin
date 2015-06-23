@@ -127,7 +127,7 @@ describe('Mailin', function () {
         /* Make an http server to receive the webhook. */
         var server = express(),
             conn;
-        server.use(server.router);
+
         server.head('/webhook', function (req, res) {
             res.send(200);
         });
