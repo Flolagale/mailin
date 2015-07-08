@@ -2,6 +2,7 @@
   "name": "mailin",
   "version": "2.0.0",
   "description": "Artisanal inbound emails for every web app",
+  "engine": "node ~0.12.4",
   "main": "index.js",
   "bin": {
     "mailin": "./run-cli.js"
