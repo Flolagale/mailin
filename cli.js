@@ -32,7 +32,7 @@ program.version(pkg.version)
     .option('--verbose', 'Set the logging level to verbose.')
     .option('--debug', 'Printout debug info such as the smtp commands.')
     .option('--profile', 'Enable basic memory usage profiling.')
-    .option('--enable-dns-validation', 'Disable DNS domain lookup')
+    .option('--enable-dns-validation', 'Enable DNS domain lookup')
     .option('--disabled-smtp-commands [value]', 'smtp disabled commands list, comma separated', list)
     .option('--smtp [value]', 'smtp options split with :, check https://github.com/andris9/smtp-server/tree/v1.4.0', collectOptions, {});
 
