@@ -27,7 +27,9 @@ module.exports = function (grunt) {
         jsbeautifier: {
             files: ['<%= jsfiles %>'],
             options: {
-                space_after_anon_function: true
+                js: {
+                    spaceAfterAnonFunction: true
+                }
             }
         },
 

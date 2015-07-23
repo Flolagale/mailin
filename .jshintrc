@@ -9,13 +9,14 @@
     "unused": true,
     "trailing": true,
     "white": true,
-    "globalstrict": true,
+    "globalstrict": false,
     "browser": true,
     "node": true,
     "jquery": true,
     "devel": true,
     "globals": {
         "FormData": true,
+        "Promise": true,
 
         "before": false,
         "after": false,
