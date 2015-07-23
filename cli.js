@@ -2,7 +2,7 @@
 'use strict';
 
 var logger = require('./lib/logger');
-var mailin = require('./lib/mailin');
+var mailin = require('./index');
 var program = require('commander');
 
 function collectOptions(keyValue, options) {
