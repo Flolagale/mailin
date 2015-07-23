@@ -2,7 +2,7 @@
 
 var fs = require('fs');
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
     // Load .jshintrc file.
     var hintOptions = JSON.parse(fs.readFileSync('.jshintrc', 'utf8'));
@@ -27,7 +27,9 @@ module.exports = function(grunt) {
         jsbeautifier: {
             files: ['<%= jsfiles %>'],
             options: {
-                space_after_anon_function: true
+                js: {
+                    spaceAfterAnonFunction: true
+                }
             }
         },
 

@@ -18,7 +18,7 @@ should = chai.Should();
 
 before(function (done) {
     mailin.start({
-        verbose: true,
+        // verbose: true,
         smtpOptions: {
             disabledCommands: ['AUTH'],
             secure: false
@@ -78,39 +78,33 @@ describe('Mailin', function () {
                         address: 'me@jokund.com',
                         name: 'Me'
                     }],
-                    to: [
-                        {
-                            address: 'first@jokund.com',
-                            name: 'First Receiver'
-                        }, {
-                            address: 'second@jokund.com',
-                            name: ''
-                        }
-                    ],
-                    attachments: [
-                        {
-                            contentType: 'text/plain',
-                            fileName: 'dummyFile.txt',
-                            contentDisposition: 'attachment',
-                            transferEncoding: 'base64',
-                            generatedFileName: 'dummyFile.txt',
-                            contentId: '6e4a9c577e603de61e554abab84f6297@mailparser',
-                            checksum: 'e9fa6319356c536b962650eda9399a44',
-                            length: 28,
-                            content: new Buffer('my dummy attachment contents')
-                        }
-                    ],
+                    to: [{
+                        address: 'first@jokund.com',
+                        name: 'First Receiver'
+                    }, {
+                        address: 'second@jokund.com',
+                        name: ''
+                    }],
+                    attachments: [{
+                        contentType: 'text/plain',
+                        fileName: 'dummyFile.txt',
+                        contentDisposition: 'attachment',
+                        transferEncoding: 'base64',
+                        generatedFileName: 'dummyFile.txt',
+                        contentId: '6e4a9c577e603de61e554abab84f6297@mailparser',
+                        checksum: 'e9fa6319356c536b962650eda9399a44',
+                        length: 28,
+                        content: new Buffer('my dummy attachment contents')
+                    }],
                     dkim: 'failed',
                     envelopeFrom: {
                         address: "envelopefrom@jokund.com",
                         args: false
                     },
-                    envelopeTo: [
-                        {
-                            address: "envelopeto@jokund.com",
-                            args: false
-                        }
-                    ],
+                    envelopeTo: [{
+                        address: "envelopeto@jokund.com",
+                        args: false
+                    }],
                     spf: 'failed',
                     spamScore: expectedSpamScore,
                     language: 'pidgin',
@@ -227,15 +221,21 @@ describe('Mailin', function () {
 
             /* Make an smtp client to send an email. */
             var client = new SMTPConnection({
-                port:2500,
+                port: 2500,
                 ignoreTLS: true
             });
 
-            client.connect(function() {
+            client.connect(function () {
                 client.send({
-                    from: {name: '', address: 'envelopefrom@jokund.com'},
-                    to: [{name: '', address: 'envelopeto@jokund.com'}]
-                }, fs.createReadStream('./test/fixtures/test.eml'), function(err){
+                    from: {
+                        name: '',
+                        address: 'envelopefrom@jokund.com'
+                    },
+                    to: [{
+                        name: '',
+                        address: 'envelopeto@jokund.com'
+                    }]
+                }, fs.createReadStream('./test/fixtures/test.eml'), function (err) {
                     if (err) {
                         done(err);
                     }
@@ -260,15 +260,21 @@ describe('Mailin', function () {
 
         /* Make an smtp client to send an email. */
         var client = new SMTPConnection({
-            port:2500,
+            port: 2500,
             ignoreTLS: true
         });
 
-        client.connect(function() {
+        client.connect(function () {
             client.send({
-                from: {name: 'Me', address: 'me@jokund.com'},
-                to: [{name: '', address: 'to@jokund.com'}]
-            }, fs.createReadStream('./test/fixtures/test-html-only.eml'), function(err){
+                from: {
+                    name: 'Me',
+                    address: 'me@jokund.com'
+                },
+                to: [{
+                    name: '',
+                    address: 'to@jokund.com'
+                }]
+            }, fs.createReadStream('./test/fixtures/test-html-only.eml'), function (err) {
                 if (err) {
                     done(err);
                 }
@@ -288,15 +294,26 @@ describe('Mailin', function () {
         /* Make an smtp client to send an email. */
 
         var client = new SMTPConnection({
-            port:2500,
+            port: 2500,
             ignoreTLS: true
         });
 
-        client.connect(function() {
+        client.connect(function () {
             client.send({
-                from: {name: 'Me', address: 'me@jokund.com'},
-                to: [{name: 'First Receiver', address: 'first@jokund.com'}, {name: '', address: 'second@jokund.com'}]
-            }, fs.createReadStream('./test/fixtures/test.eml'), function(err){done(err)});
+                from: {
+                    name: 'Me',
+                    address: 'me@jokund.com'
+                },
+                to: [{
+                    name: 'First Receiver',
+                    address: 'first@jokund.com'
+                }, {
+                    name: '',
+                    address: 'second@jokund.com'
+                }]
+            }, fs.createReadStream('./test/fixtures/test.eml'), function (err) {
+                done(err);
+            });
         });
     });
 
@@ -328,7 +345,7 @@ describe('Mailin', function () {
                 }
 
                 var doneEvents = [];
-                var registerDoneEvent = function (eventName){
+                var registerDoneEvent = function (eventName) {
                     doneEvents.push(eventName);
                     var remaining = _.xor(doneEvents, ['senderValidationFailed', 'error']);
                     if (remaining.length === 0) {
@@ -336,24 +353,24 @@ describe('Mailin', function () {
                     }
                 };
 
-                mailin.on('senderValidationFailed', function (err){
+                mailin.on('senderValidationFailed', function (err) {
                     err = err || undefined;
                     try {
                         should.exist(err);
                         err.should.equal('envelopefrom@foo.fifoo');
                         registerDoneEvent('senderValidationFailed');
-                    } catch(e) {
+                    } catch (e) {
                         return done(e);
                     }
                 });
 
                 /* Make an smtp client to send an email. */
                 var client = new SMTPConnection({
-                    port:2500,
+                    port: 2500,
                     ignoreTLS: true
                 });
 
-                var errorFunction = function(err) {
+                var errorFunction = function (err) {
                     err = err || undefined;
                     try {
                         should.exist(err);
@@ -365,10 +382,19 @@ describe('Mailin', function () {
                     }
                 };
 
-                client.connect(function() {
+                client.connect(function () {
                     client.send({
-                        from: {name: 'Me', address: 'envelopefrom@foo.fifoo'},
-                        to: [{name: 'First Receiver', address: 'first@jokund.com'}, {name: '', address: 'second@jokund.com'}]
+                        from: {
+                            name: 'Me',
+                            address: 'envelopefrom@foo.fifoo'
+                        },
+                        to: [{
+                            name: 'First Receiver',
+                            address: 'first@jokund.com'
+                        }, {
+                            name: '',
+                            address: 'second@jokund.com'
+                        }]
                     }, fs.createReadStream('./test/fixtures/test.eml'), errorFunction);
                 });
             });
