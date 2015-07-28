@@ -37,7 +37,7 @@ Spamassassin is not enabled by default, enable it in ```/etc/default/spamassassi
 ####Node versions
 
 The latest version of Mailin (^3.0.0) runs on node ~0.12.0 or iojs ^2.0.0. If you are running an older version of node such as ~0.10.0, you can install Mailin ^2.0.0:
-````
+```
 npm install mailin@2.0.0
 ```
 
