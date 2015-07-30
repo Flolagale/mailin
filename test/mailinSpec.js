@@ -20,7 +20,6 @@ before(function (done) {
     mailin.start({
         // verbose: true,
         smtpOptions: {
-            disabledCommands: ['AUTH'],
             secure: false
         }
     }, function (err) {
@@ -37,7 +36,7 @@ describe('Mailin', function () {
     it('should post a json to a webhook after receiving an email and trigger some events', function (done) {
         this.timeout(30000);
 
-        var doing = 2; // Number of async operations we need to wait for before calling done
+        var doing = 3; // Number of async operations we need to wait for before calling done
 
         var expectedSpamScore = 3.3;
         if (!shell.which('spamassassin') || !shell.which('spamc')) {
@@ -51,6 +50,8 @@ describe('Mailin', function () {
             console.log("Event 'startMessage' triggered.");
             connData = _.cloneDeep(connection);
             console.log(connData);
+            should.exist(connData.id);
+            doing--;
         });
 
         mailin.on('message', function (connection, data) {
@@ -197,7 +198,7 @@ describe('Mailin', function () {
                         connection: connData
                     });
 
-                    res.send(200);
+                    res.sendStatus(200);
 
                     doing--;
                 } catch (e) {
