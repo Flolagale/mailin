@@ -6,22 +6,15 @@ var express = require('express');
 var fs = require('fs');
 var mailin = require('../lib/mailin');
 var multiparty = require('multiparty');
-var SMTPConnection = require('smtp-connection');
+var simplesmtp = require('simplesmtp');
 var shell = require('shelljs');
 
-var chai = require('chai');
-var chaiAsPromised = require('chai-as-promised');
-chai.use(chaiAsPromised);
-
 var should = null;
-should = chai.Should();
+should = require('should');
 
 before(function (done) {
     mailin.start({
-        // verbose: true,
-        smtpOptions: {
-            secure: false
-        }
+        verbose: true,
     }, function (err) {
         should.not.exist(err);
         done();
@@ -34,9 +27,9 @@ beforeEach(function () {
 
 describe('Mailin', function () {
     it('should post a json to a webhook after receiving an email and trigger some events', function (done) {
-        this.timeout(30000);
+        this.timeout(10000);
 
-        var doing = 3; // Number of async operations we need to wait for before calling done
+        var doing = 2; // Number of async operations we need to wait for before calling done
 
         var expectedSpamScore = 3.3;
         if (!shell.which('spamassassin') || !shell.which('spamc')) {
@@ -48,29 +41,138 @@ describe('Mailin', function () {
         var connData = null;
         mailin.on('startMessage', function (connection) {
             console.log("Event 'startMessage' triggered.");
-            connData = _.cloneDeep(connection);
+            connData = _.pick(connection, ['from', 'to', 'remoteAddress', 'authentication', 'id']);
             console.log(connData);
-            should.exist(connData.id);
-            doing--;
         });
 
         mailin.on('message', function (connection, data) {
             console.log("Event 'message' triggered.");
             // console.log(data);
-            try {
 
-                data.attachments[0].content.toString().should.eql('my dummy attachment contents');
+            data.attachments[0].content.toString().should.eql('my dummy attachment contents');
+
+            /* Delete the headers that include a timestamp. */
+            delete data.headers.received;
+
+            data.should.eql({
+                html: '<b>Hello world!</b>',
+                text: 'Hello world!',
+                headers: {
+                    'x-mailer': 'Nodemailer 1.0',
+                    from: '"Me" <me@jokund.com>',
+                    to: '"First Receiver" <first@jokund.com>, second@jokund.com',
+                    'content-type': 'multipart/mixed; boundary="----mailcomposer-?=_1-1402581589619"',
+                    'mime-version': '1.0'
+                },
+                priority: 'normal',
+                from: [{
+                    address: 'me@jokund.com',
+                    name: 'Me'
+                }],
+                to: [{
+                    address: 'first@jokund.com',
+                    name: 'First Receiver'
+                }, {
+                    address: 'second@jokund.com',
+                    name: ''
+                }],
+                attachments: [{
+                    contentType: 'text/plain',
+                    fileName: 'dummyFile.txt',
+                    contentDisposition: 'attachment',
+                    transferEncoding: 'base64',
+                    generatedFileName: 'dummyFile.txt',
+                    contentId: '6e4a9c577e603de61e554abab84f6297@mailparser',
+                    checksum: 'e9fa6319356c536b962650eda9399a44',
+                    length: 28,
+                    content: new Buffer('my dummy attachment contents'),
+                    // contents: [
+                    // 109,
+                    // 121,
+                    // 32,
+                    // 100,
+                    // 117,
+                    // 109,
+                    // 109,
+                    // 121,
+                    // 32,
+                    // 97,
+                    // 116,
+                    // 116,
+                    // 97,
+                    // 99,
+                    // 104,
+                    // 109,
+                    // 101,
+                    // 110,
+                    // 116,
+                    // 32,
+                    // 99,
+                    // 111,
+                    // 110,
+                    // 116,
+                    // 101,
+                    // 110,
+                    // 116,
+                    // 115
+                    // ]
+                }],
+                dkim: 'failed',
+                envelopeFrom: [{
+                    address: "envelopefrom@jokund.com",
+                    name: ""
+                }],
+                envelopeTo: [{
+                    address: "envelopeto@jokund.com",
+                    name: ""
+                }],
+                spf: 'failed',
+                spamScore: expectedSpamScore,
+                language: 'pidgin',
+                cc: [],
+                connection: connData
+            });
+
+            doing--;
+        });
+
+        /* Make an http server to receive the webhook. */
+        var server = express(),
+            conn;
+        server.use(server.router);
+        server.head('/webhook', function (req, res) {
+            res.send(200);
+        });
+        server.post('/webhook', function (req, res) {
+            console.log('Receiving webhook.');
+
+            var form = new multiparty.Form();
+            form.parse(req, function (err, fields, files) {
+                if (err) console.log(err.stack);
+                should.not.exist(err);
+
+                should.exist(files);
+                Object.keys(files).length.should.eql(0);
+
+                should.exist(fields);
+                should.exist(fields.mailinMsg);
+                should.exist(fields['dummyFile.txt']);
+
+                var mailinMsg = JSON.parse(fields.mailinMsg);
 
                 /* Delete the headers that include a timestamp. */
-                delete data.headers.received;
+                delete mailinMsg.headers.received;
 
-                data.should.eql({
+                /* And the connection id, which is random. */
+                delete mailinMsg.data;
+
+                mailinMsg.should.eql({
                     html: '<b>Hello world!</b>',
                     text: 'Hello world!',
                     headers: {
                         'x-mailer': 'Nodemailer 1.0',
-                        'from': '\"Me\" <me@jokund.com>',
-                        'to': '\"First Receiver\" <first@jokund.com>, second@jokund.com',
+                        from: '"Me" <me@jokund.com>',
+                        to: '"First Receiver" <first@jokund.com>, second@jokund.com',
                         'content-type': 'multipart/mixed; boundary="----mailcomposer-?=_1-1402581589619"',
                         'mime-version': '1.0'
                     },
@@ -94,17 +196,16 @@ describe('Mailin', function () {
                         generatedFileName: 'dummyFile.txt',
                         contentId: '6e4a9c577e603de61e554abab84f6297@mailparser',
                         checksum: 'e9fa6319356c536b962650eda9399a44',
-                        length: 28,
-                        content: new Buffer('my dummy attachment contents')
+                        length: '28'
                     }],
                     dkim: 'failed',
-                    envelopeFrom: {
-                        address: "envelopefrom@jokund.com",
-                        args: false
-                    },
+                    envelopeFrom: [{
+                        address: 'envelopefrom@jokund.com',
+                        name: ''
+                    }],
                     envelopeTo: [{
-                        address: "envelopeto@jokund.com",
-                        args: false
+                        address: 'envelopeto@jokund.com',
+                        name: ''
                     }],
                     spf: 'failed',
                     spamScore: expectedSpamScore,
@@ -113,97 +214,9 @@ describe('Mailin', function () {
                     connection: connData
                 });
 
+                res.send(200);
+
                 doing--;
-            } catch (e) {
-                done(e);
-            }
-        });
-
-        /* Make an http server to receive the webhook. */
-        var server = express(),
-            conn;
-
-        server.head('/webhook', function (req, res) {
-            res.send(200);
-        });
-        server.post('/webhook', function (req, res) {
-            console.log('Receiving webhook.');
-
-            var form = new multiparty.Form();
-            form.parse(req, function (err, fields, files) {
-                try {
-                    if (err) console.log(err.stack);
-                    should.not.exist(err);
-
-                    should.exist(files);
-                    Object.keys(files).length.should.eql(0);
-
-                    should.exist(fields);
-                    fields.should.have.property('mailinMsg');
-                    fields.should.have.property('dummyFile.txt');
-
-                    var mailinMsg = JSON.parse(fields.mailinMsg);
-
-                    /* Delete the headers that include a timestamp. */
-                    delete mailinMsg.headers.received;
-
-                    /* And the connection id, which is random. */
-                    delete mailinMsg.data;
-
-                    mailinMsg.should.eql({
-                        html: '<b>Hello world!</b>',
-                        text: 'Hello world!',
-                        headers: {
-                            'x-mailer': 'Nodemailer 1.0',
-                            from: '"Me" <me@jokund.com>',
-                            to: '"First Receiver" <first@jokund.com>, second@jokund.com',
-                            'content-type': 'multipart/mixed; boundary="----mailcomposer-?=_1-1402581589619"',
-                            'mime-version': '1.0'
-                        },
-                        priority: 'normal',
-                        from: [{
-                            address: 'me@jokund.com',
-                            name: 'Me'
-                        }],
-                        to: [{
-                            address: 'first@jokund.com',
-                            name: 'First Receiver'
-                        }, {
-                            address: 'second@jokund.com',
-                            name: ''
-                        }],
-                        attachments: [{
-                            contentType: 'text/plain',
-                            fileName: 'dummyFile.txt',
-                            contentDisposition: 'attachment',
-                            transferEncoding: 'base64',
-                            generatedFileName: 'dummyFile.txt',
-                            contentId: '6e4a9c577e603de61e554abab84f6297@mailparser',
-                            checksum: 'e9fa6319356c536b962650eda9399a44',
-                            length: 28
-                        }],
-                        dkim: 'failed',
-                        envelopeFrom: {
-                            address: 'envelopefrom@jokund.com',
-                            args: false
-                        },
-                        envelopeTo: [{
-                            address: 'envelopeto@jokund.com',
-                            args: false
-                        }],
-                        spf: 'failed',
-                        spamScore: expectedSpamScore,
-                        language: 'pidgin',
-                        cc: [],
-                        connection: connData
-                    });
-
-                    res.sendStatus(200);
-
-                    doing--;
-                } catch (e) {
-                    done(e);
-                }
             });
 
             var waiting = setInterval(function () {
@@ -221,28 +234,19 @@ describe('Mailin', function () {
             console.log('Http server listening on port 3000');
 
             /* Make an smtp client to send an email. */
-            var client = new SMTPConnection({
-                port: 2500,
-                ignoreTLS: true
-            });
+            var client = simplesmtp.connect(2500);
 
-            client.connect(function () {
-                client.send({
-                    from: {
-                        name: '',
-                        address: 'envelopefrom@jokund.com'
-                    },
-                    to: [{
-                        name: '',
-                        address: 'envelopeto@jokund.com'
-                    }]
-                }, fs.createReadStream('./test/fixtures/test.eml'), function (err) {
-                    if (err) {
-                        done(err);
-                    }
+            /* Run only once as 'idle' is emitted again after message delivery. */
+            client.once('idle', function () {
+                client.useEnvelope({
+                    from: 'envelopefrom@jokund.com',
+                    to: 'envelopeto@jokund.com'
                 });
             });
 
+            client.on('message', function () {
+                fs.createReadStream('./test/fixtures/test.eml').pipe(client);
+            });
         });
     });
 
@@ -251,37 +255,24 @@ describe('Mailin', function () {
 
         mailin.on('message', function (connection, data) {
             // console.log(data);
-            try {
-                data.text.should.eql('HELLO WORLD\nThis is a line that needs to be at least a little longer than 80 characters so\nthat we can check the character wrapping functionality.\n\nThis is a test of a link [https://github.com/Flolagale/mailin] .');
-                done();
-            } catch (e) {
-                done(e);
-            }
+            data.text.should.eql('HELLO WORLD\nThis is a line that needs to be at least a little longer than 80 characters so\nthat we can check the character wrapping functionality.\n\nThis is a test of a link [https://github.com/Flolagale/mailin] .');
+            done();
         });
 
         /* Make an smtp client to send an email. */
-        var client = new SMTPConnection({
-            port: 2500,
-            ignoreTLS: true
-        });
+        var client = simplesmtp.connect(2500);
 
-        client.connect(function () {
-            client.send({
-                from: {
-                    name: 'Me',
-                    address: 'me@jokund.com'
-                },
-                to: [{
-                    name: '',
-                    address: 'to@jokund.com'
-                }]
-            }, fs.createReadStream('./test/fixtures/test-html-only.eml'), function (err) {
-                if (err) {
-                    done(err);
-                }
+        /* Run only once as 'idle' is emitted again after message delivery. */
+        client.once('idle', function () {
+            client.useEnvelope({
+                from: 'envelopefrom@jokund.com',
+                to: 'envelopeto@jokund.com'
             });
         });
 
+        client.on('message', function () {
+            fs.createReadStream('./test/fixtures/test-html-only.eml').pipe(client);
+        });
     });
 
     it('should not validate sender domain DNS by default', function (done) {
@@ -293,28 +284,18 @@ describe('Mailin', function () {
         });
 
         /* Make an smtp client to send an email. */
+        var client = simplesmtp.connect(2500);
 
-        var client = new SMTPConnection({
-            port: 2500,
-            ignoreTLS: true
+        /* Run only once as 'idle' is emitted again after message delivery. */
+        client.once('idle', function () {
+            client.useEnvelope({
+                from: 'envelopefrom@foo.fifoo',
+                to: 'envelopeto@foo.fifoo'
+            });
         });
 
-        client.connect(function () {
-            client.send({
-                from: {
-                    name: 'Me',
-                    address: 'me@jokund.com'
-                },
-                to: [{
-                    name: 'First Receiver',
-                    address: 'first@jokund.com'
-                }, {
-                    name: '',
-                    address: 'second@jokund.com'
-                }]
-            }, fs.createReadStream('./test/fixtures/test.eml'), function (err) {
-                done(err);
-            });
+        client.on('message', function () {
+            fs.createReadStream('./test/fixtures/test.eml').pipe(client);
         });
     });
 
@@ -324,79 +305,55 @@ describe('Mailin', function () {
         this.timeout(10000);
 
         mailin.stop(function (err) {
-            try {
-                if (err) console.log(err);
-                should.not.exist(err);
-            } catch (e) {
-                return done(e);
-            }
+            if (err) console.log(err);
+            should.not.exist(err);
 
             mailin.start({
-                disableDnsValidation: false,
                 smtpOptions: {
-                    disabledCommands: ['AUTH'],
-                    secure: false
+                    disableDNSValidation: false
                 }
             }, function (err) {
-                try {
-                    if (err) console.log(err);
-                    should.not.exist(err);
-                } catch (e) {
-                    return done(e);
-                }
+                if (err) console.log(err);
+                should.not.exist(err);
 
                 var doneEvents = [];
                 var registerDoneEvent = function (eventName) {
                     doneEvents.push(eventName);
-                    var remaining = _.xor(doneEvents, ['senderValidationFailed', 'error']);
-                    if (remaining.length === 0) {
-                        done();
-                    }
+
+                    /* Call done if all the events of the test have been called. */
+                    var shouldCallDone = ['senderValidationFailed', 'error'].every(function (eventName) {
+                        return _.contains(doneEvents, eventName);
+                    });
+
+                    if (shouldCallDone) return done();
                 };
 
                 mailin.on('senderValidationFailed', function (err) {
-                    err = err || undefined;
-                    try {
-                        should.exist(err);
-                        err.should.equal('envelopefrom@foo.fifoo');
-                        registerDoneEvent('senderValidationFailed');
-                    } catch (e) {
-                        return done(e);
-                    }
+                    should.exist(err);
+                    err.should.equal('envelopefrom@foo.fifoo');
+                    registerDoneEvent('senderValidationFailed');
                 });
 
                 /* Make an smtp client to send an email. */
-                var client = new SMTPConnection({
-                    port: 2500,
-                    ignoreTLS: true
+                var client = simplesmtp.connect(2500);
+
+                /* Run only once as 'idle' is emitted again after message delivery. */
+                client.once('idle', function () {
+                    client.useEnvelope({
+                        from: 'envelopefrom@foo.fifoo',
+                        to: 'envelopeto@foo.fifoo'
+                    });
                 });
 
-                var errorFunction = function (err) {
-                    err = err || undefined;
-                    try {
-                        should.exist(err);
-                        console.log(err);
-                        err.response.indexOf('Sender address rejected: Domain not found').should.not.equal(-1);
-                        registerDoneEvent('error');
-                    } catch (e) {
-                        return done(e);
-                    }
-                };
+                client.on('error', function (err) {
+                    should.exist(err);
+                    console.log(err);
+                    err.data.indexOf('Sender address rejected: Domain not found').should.not.equal(-1);
+                    registerDoneEvent('error');
+                });
 
-                client.connect(function () {
-                    client.send({
-                        from: {
-                            name: 'Me',
-                            address: 'envelopefrom@foo.fifoo'
-                        },
-                        to: [{
-                            name: 'First Receiver',
-                            address: 'first@jokund.com'
-                        }, {
-                            name: '',
-                            address: 'second@jokund.com'
-                        }]
-                    }, fs.createReadStream('./test/fixtures/test.eml'), errorFunction);
+                client.on('message', function () {
+                    fs.createReadStream('./test/fixtures/test.eml').pipe(client);
                 });
             });
         });

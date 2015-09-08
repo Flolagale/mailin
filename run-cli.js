@@ -11,7 +11,7 @@ var restartCount = 0;
 var mailinProcess = new (forever.Monitor)(path.join(__dirname, 'cli.js'), {
     max: 1000,
     minUptime: 10000,
-    args: process.argv.slice(2)
+    options: process.argv.slice(2)
 });
 
 mailinProcess.on('error', function (err) {
