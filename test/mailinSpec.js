@@ -4,18 +4,21 @@
 var _ = require('lodash');
 var express = require('express');
 var fs = require('fs');
-var mailin = require('../lib/mailin');
+var Mailin = require('../lib/mailin');
 var multiparty = require('multiparty');
 var simplesmtp = require('simplesmtp');
 var shell = require('shelljs');
-
+var mailin;
 var should = null;
 should = require('should');
 
 before(function (done) {
-    mailin.start({
+    mailin = new Mailin({
         verbose: true,
-    }, function (err) {
+        keepTmpFile: true
+    });
+
+    mailin.start(function (err) {
         should.not.exist(err);
         done();
     });
@@ -26,6 +29,24 @@ beforeEach(function () {
 });
 
 describe('Mailin', function () {
+
+    describe('email handler', function () {
+        it('should parse a base64 encoded email', function (done) {
+
+            var tstone1 = '{"from":"tstone@controlscan.com","to":["mirror@mail.humanexploit.com"],"date":"2015-09-04T18:12:26.165Z","remoteAddress":"::ffff:199.193.204.204","authentication":{"username":false,"authenticated":false,"state":"NORMAL"},"host":"out.West.EXCH082.serverdata.net","mailPath":".tmp/fb66f544876d38ac1d419d0a16828a6e7e96fe9b","mailWriteStream":{"_writableState":{"objectMode":false,"highWaterMark":16384,"needDrain":false,"ending":false,"ended":false,"finished":false,"decodeStrings":true,"defaultEncoding":"utf8","length":0,"writing":false,"corked":0,"sync":true,"bufferProcessing":false,"writecb":null,"writelen":0,"bufferedRequest":null,"lastBufferedRequest":null,"pendingcb":0,"prefinished":false,"errorEmitted":false},"writable":true,"domain":null,"_events":{},"_maxListeners":20,"path":".tmp/fb66f544876d38ac1d419d0a16828a6e7e96fe9b","fd":null,"flags":"w","mode":438,"bytesWritten":0},"id":"41996b0d","level":"debug","message":"replied","timestamp":"2015-09-04T18:12:26.618Z"}';
+
+            var connection = JSON.parse(tstone1);
+
+            connection.mailPath = connection.mailWriteStream.path = './test/fixtures/case1-tstone.eml';
+
+            mailin.onDataReady(connection, function(){
+              //console.log(report);
+
+              done();
+            });
+        });
+    });
+
     it('should post a json to a webhook after receiving an email and trigger some events', function (done) {
         this.timeout(10000);
 
@@ -47,9 +68,9 @@ describe('Mailin', function () {
 
         mailin.on('message', function (connection, data) {
             console.log("Event 'message' triggered.");
-            // console.log(data);
+            //console.log(data);
 
-            data.attachments[0].content.toString().should.eql('my dummy attachment contents');
+            data.attachments[0].fileName.should.eql('dummyFile.txt');
 
             /* Delete the headers that include a timestamp. */
             delete data.headers.received;
@@ -84,38 +105,7 @@ describe('Mailin', function () {
                     generatedFileName: 'dummyFile.txt',
                     contentId: '6e4a9c577e603de61e554abab84f6297@mailparser',
                     checksum: 'e9fa6319356c536b962650eda9399a44',
-                    length: 28,
-                    content: new Buffer('my dummy attachment contents'),
-                    // contents: [
-                    // 109,
-                    // 121,
-                    // 32,
-                    // 100,
-                    // 117,
-                    // 109,
-                    // 109,
-                    // 121,
-                    // 32,
-                    // 97,
-                    // 116,
-                    // 116,
-                    // 97,
-                    // 99,
-                    // 104,
-                    // 109,
-                    // 101,
-                    // 110,
-                    // 116,
-                    // 32,
-                    // 99,
-                    // 111,
-                    // 110,
-                    // 116,
-                    // 101,
-                    // 110,
-                    // 116,
-                    // 115
-                    // ]
+                    length: 28
                 }],
                 dkim: 'failed',
                 envelopeFrom: [{
@@ -254,7 +244,7 @@ describe('Mailin', function () {
         this.timeout(10000);
 
         mailin.on('message', function (connection, data) {
-            // console.log(data);
+            console.log(data);
             data.text.should.eql('HELLO WORLD\nThis is a line that needs to be at least a little longer than 80 characters so\nthat we can check the character wrapping functionality.\n\nThis is a test of a link [https://github.com/Flolagale/mailin] .');
             done();
         });
