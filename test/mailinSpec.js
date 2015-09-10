@@ -13,8 +13,7 @@ var mailin;
 
 before(function (done) {
     mailin = new Mailin({
-        verbose: true,
-        keepTmpFile: true
+        verbose: true
     });
 
     mailin.start(function (err) {
@@ -28,23 +27,6 @@ beforeEach(function () {
 });
 
 describe('Mailin', function () {
-
-    describe('email handler', function () {
-        it('should parse a base64 encoded email', function (done) {
-
-            var tstone1 = '{"from":"tstone@controlscan.com","to":["mirror@mail.humanexploit.com"],"date":"2015-09-04T18:12:26.165Z","remoteAddress":"::ffff:199.193.204.204","authentication":{"username":false,"authenticated":false,"state":"NORMAL"},"host":"out.West.EXCH082.serverdata.net","mailPath":".tmp/fb66f544876d38ac1d419d0a16828a6e7e96fe9b","mailWriteStream":{"_writableState":{"objectMode":false,"highWaterMark":16384,"needDrain":false,"ending":false,"ended":false,"finished":false,"decodeStrings":true,"defaultEncoding":"utf8","length":0,"writing":false,"corked":0,"sync":true,"bufferProcessing":false,"writecb":null,"writelen":0,"bufferedRequest":null,"lastBufferedRequest":null,"pendingcb":0,"prefinished":false,"errorEmitted":false},"writable":true,"domain":null,"_events":{},"_maxListeners":20,"path":".tmp/fb66f544876d38ac1d419d0a16828a6e7e96fe9b","fd":null,"flags":"w","mode":438,"bytesWritten":0},"id":"41996b0d","level":"debug","message":"replied","timestamp":"2015-09-04T18:12:26.618Z"}';
-
-            var connection = JSON.parse(tstone1);
-
-            connection.mailPath = connection.mailWriteStream.path = './test/fixtures/case1-tstone.eml';
-
-            mailin.onDataReady(connection, function(){
-              //console.log(report);
-
-              done();
-            });
-        });
-    });
 
     it('should post a json to a webhook after receiving an email and trigger some events', function (done) {
         this.timeout(10000);
@@ -185,7 +167,7 @@ describe('Mailin', function () {
                         generatedFileName: 'dummyFile.txt',
                         contentId: '6e4a9c577e603de61e554abab84f6297@mailparser',
                         checksum: 'e9fa6319356c536b962650eda9399a44',
-                        length: '28'
+                        length: 28
                     }],
                     dkim: 'failed',
                     envelopeFrom: [{
@@ -288,6 +270,39 @@ describe('Mailin', function () {
         });
     });
 
+    describe('email handler', function () {
+        it('should parse a base64 encoded email', function (done) {
+
+            mailin.stop(function(err){
+
+              if(err) console.log(err);
+
+              mailin.start({
+                  verbose: true,
+                  keepTmpFile: true
+              }, function(err){
+
+                  if(err) console.log(err);
+
+                var tstone1 = '{"from":"tstone@controlscan.com","to":["mirror@mail.humanexploit.com"],"date":"2015-09-04T18:12:26.165Z","remoteAddress":"::ffff:199.193.204.204","authentication":{"username":false,"authenticated":false,"state":"NORMAL"},"host":"out.West.EXCH082.serverdata.net","mailPath":".tmp/fb66f544876d38ac1d419d0a16828a6e7e96fe9b","mailWriteStream":{"_writableState":{"objectMode":false,"highWaterMark":16384,"needDrain":false,"ending":false,"ended":false,"finished":false,"decodeStrings":true,"defaultEncoding":"utf8","length":0,"writing":false,"corked":0,"sync":true,"bufferProcessing":false,"writecb":null,"writelen":0,"bufferedRequest":null,"lastBufferedRequest":null,"pendingcb":0,"prefinished":false,"errorEmitted":false},"writable":true,"domain":null,"_events":{},"_maxListeners":20,"path":".tmp/fb66f544876d38ac1d419d0a16828a6e7e96fe9b","fd":null,"flags":"w","mode":438,"bytesWritten":0},"id":"41996b0d","level":"debug","message":"replied","timestamp":"2015-09-04T18:12:26.618Z"}';
+
+                var connection = JSON.parse(tstone1);
+
+                connection.mailPath = connection.mailWriteStream.path = './test/fixtures/case1-tstone.eml';
+
+                mailin.onDataReady(connection, function(){
+                  //console.log(report);
+
+                  done();
+                });
+
+              });
+            });
+
+
+        });
+    });
+
     /* This test should run as the last test since it restarts mailin with
      * different options. */
     it('should validate sender domain DNS if requested', function (done) {
@@ -298,6 +313,7 @@ describe('Mailin', function () {
             should.not.exist(err);
 
             mailin.start({
+                keepTmpFile: false,
                 smtpOptions: {
                     disableDNSValidation: false
                 }
