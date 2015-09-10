@@ -306,6 +306,8 @@ describe('Mailin', function () {
                 if (err) console.log(err);
                 should.not.exist(err);
 
+                console.log('callback');
+
                 var doneEvents = [];
                 var registerDoneEvent = function (eventName) {
                     doneEvents.push(eventName);
