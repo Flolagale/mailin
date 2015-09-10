@@ -1,4 +1,4 @@
-#Mailin [![Build Status](https://travis-ci.org/Flolagale/mailin.svg?branch=master)](https://travis-ci.org/Flolagale/mailin)
+#Mailin [![Build Status](https://travis-ci.org/hellsan631/mailin.svg?branch=master)](https://travis-ci.org/hellsan631/mailin)
 
 __Artisanal inbound emails for every web app__
 <img align="right" src="postman.jpg"/>
