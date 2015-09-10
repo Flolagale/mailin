@@ -1,16 +1,15 @@
 /* jshint expr: true */
 'use strict';
 
-var _ = require('lodash');
-var express = require('express');
-var fs = require('fs');
-var Mailin = require('../lib/mailin');
-var multiparty = require('multiparty');
-var simplesmtp = require('simplesmtp');
-var shell = require('shelljs');
+var _           = require('lodash');
+var express     = require('express');
+var fs          = require('fs');
+var Mailin      = require('../lib/mailin');
+var multiparty  = require('multiparty');
+var simplesmtp  = require('simplesmtp');
+var shell       = require('shelljs');
+var should      = require('should');
 var mailin;
-var should = null;
-should = require('should');
 
 before(function (done) {
     mailin = new Mailin({
@@ -305,8 +304,6 @@ describe('Mailin', function () {
             }, function (err) {
                 if (err) console.log(err);
                 should.not.exist(err);
-
-                console.log('callback');
 
                 var doneEvents = [];
                 var registerDoneEvent = function (eventName) {
