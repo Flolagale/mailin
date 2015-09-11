@@ -73,6 +73,8 @@ describe('Mailin', function () {
 
   describe('email handler', function () {
     it('should parse a base64 encoded email', function (done) {
+      this.timeout(10000);
+
       mailin.stop(function(err){
 
         if(err) console.log(err);
