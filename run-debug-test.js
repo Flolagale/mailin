@@ -14,10 +14,10 @@ var tstone1 = '{"from":"tstone@controlscan.com","to":["mirror@mail.humanexploit.
 
 var mk1 = '{"id":"d662a2fc-6b69-4ccf-a4a4-5cd2bb02b172","remoteAddress":"::ffff:209.85.223.178","clientHostname":"[::ffff:209.85.223.178]","hostNameAppearsAs":"mail-io0-f178.google.com","envelope":{"mailFrom":{"address":"matkle414@gmail.com","args":false},"rcptTo":[{"address":"mirror@mail.humanexploit.com","args":false}]},"user":false,"transaction":1}';
 
-var connection = JSON.parse(tstone1);
+var connection = JSON.parse(mk1);
 
-//connection.mailPath = './test/fixtures/case2-mk.eml';
-connection.mailPath = './test/fixtures/case1-tstone.eml';
+connection.mailPath = './test/fixtures/case2-mk.eml';
+//connection.mailPath = './test/fixtures/case1-tstone.eml';
 
 delete connection.mailWriteStream;
 
