@@ -1,6 +1,7 @@
 language: node_js
 node_js:
-  - "0.10"
+  - "0.12.7"
+  - "4.0.0"
 before_install:
   - sudo apt-get install spamassassin spamc
   - sudo sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/spamassassin
