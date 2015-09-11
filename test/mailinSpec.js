@@ -18,19 +18,19 @@ var should          = chai.Should();
 var mailin;
 
 before(function (done) {
-    mailin = new Mailin({
-        verbose: true
-    });
+  mailin = new Mailin({
+    verbose: false
+  });
 
-    mailin.start(function (err) {
-      console.log(err);
-      should.not.exist(err);
-      done();
-    });
+  mailin.start(function (err) {
+    console.log(err);
+    should.not.exist(err);
+    done();
+  });
 });
 
 beforeEach(function () {
-    mailin.removeAllListeners();
+  mailin.removeAllListeners();
 });
 
 describe('Mailin', function () {
