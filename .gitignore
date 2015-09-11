@@ -2,3 +2,5 @@ node_modules
 .tmp
 *.swp
 *.pyc
+*.pdf
+*.psd
