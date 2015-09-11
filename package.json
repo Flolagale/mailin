@@ -38,10 +38,10 @@
     "languagedetect": "^1.1.1",
     "lodash": "^3.10.1",
     "mailparser": "^0.5.2",
+    "node-spamd": "0.0.4",
     "node-uuid": "^1.4.3",
     "shelljs": "^0.5.3",
     "smtp-server": "^1.5.0",
-    "spamc": "0.0.5",
     "superagent": "^1.3.0",
     "winston": "^1.0.1"
   },

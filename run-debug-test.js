@@ -16,13 +16,16 @@ var connection = JSON.parse(tstone1);
 
 connection.mailPath = connection.mailWriteStream.path = './test/fixtures/case1-tstone.eml';
 
-//console.log(connection);
+console.log(connection);
 
-mailin.onDataReady(connection, function(results){
-  delete results.rawEmail;
+mailin.start(function(){
+  mailin.onDataReady(connection, function(results){
+    delete results.rawEmail;
 
-  //console.log(results);
+    //console.log(results);
+  });
 });
+
 
 mailin.on('message', function(connection, report, raw){
   console.log('message event called');
