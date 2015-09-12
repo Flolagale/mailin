@@ -7,6 +7,8 @@ var mailin = new Mailin({
     verbose: true,
     debug: true,
     disableWebhook: true,
+    disableDNSValidation: false,
+    disableDnsLookup: false,
     keepTmpFile: true
 });
 
