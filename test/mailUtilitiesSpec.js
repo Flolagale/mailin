@@ -12,8 +12,7 @@ describe('The mail signature verfier', function () {
     it('should be able to verify the spf for a given ip, address and host',
         function (done) {
             mailUtilities.validateSpf('180.73.166.174',
-                'someone@gmail.com', 'gmail.com',
-                function (err, isSpfValid) {
+                'someone@gmail.com', 'gmail.com', function (err, isSpfValid) {
                     if (err) console.log(err);
                     should.not.exist(err);
                     isSpfValid.should.not.be.true;

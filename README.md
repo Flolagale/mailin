@@ -1,4 +1,4 @@
-#Mailin [![Build Status](https://travis-ci.org/Flolagale/mailin.svg?branch=master)](https://travis-ci.org/Flolagale/mailin)
+#Mailin [![Build Status](https://travis-ci.org/hellsan631/mailin.svg?branch=master)](https://travis-ci.org/hellsan631/mailin)
 
 __Artisanal inbound emails for every web app__
 <img align="right" src="postman.jpg"/>
@@ -34,13 +34,6 @@ sudo aptitude install spamassassin spamc
 ```
 Spamassassin is not enabled by default, enable it in ```/etc/default/spamassassin```.
 
-####Node versions
-
-The latest version of Mailin (^3.0.0) runs on node ~0.12.0 or iojs ^2.0.0. If you are running an older version of node such as ~0.10.0, you can install Mailin ^2.0.0:
-```
-npm install mailin@2.0.0
-```
-
 ####The crux: setting up your DNS correctly
 
 In order to receive emails, your smtp server address should be made available somewhere. Two records should be added to your DNS records. Let us pretend that we want to receive emails at ```*@subdomain.domain.com```:
@@ -75,7 +68,7 @@ and make sure that your user can write to the log file.
 At this point, Mailin will listen for incoming emails, parse them and post an urlencoded form ```multipart/form-data``` to your webhook url.
 
 #####Webhook format
-The webhook payload is a multipart form with a ```mailinMsg``` fields always present and some optional additional fields containing the content of the attachments. How to handle this? We have got you covered, there is a working example using node and express in [mailin/samples/server.js](https://github.com/Flolagale/mailin/blob/master/samples/server.js). Anyway, once parsed, you should end up with something like:
+The webhook payload is a multipart form with a ```mailinMsg``` fields always present and some optional additional fields containing the content of the attachments. How to handle this? We have got you covered, there is a working example using node and express in [mailin/test/utils/server.js](https://github.com/Flolagale/mailin/blob/master/test/utils/server.js). Anyway, once parsed, you should end up with something like:
 ```
 {
   mailinMsg:

@@ -27,9 +27,7 @@ module.exports = function (grunt) {
         jsbeautifier: {
             files: ['<%= jsfiles %>'],
             options: {
-                js: {
-                    spaceAfterAnonFunction: true
-                }
+                space_after_anon_function: true
             }
         },
 
@@ -59,7 +57,6 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('test', [
-        'lint',
         'mochaTest'
     ]);
 };
