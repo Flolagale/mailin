@@ -332,7 +332,7 @@ describe('Mailin', function () {
             }
 
             mailin.start({
-                disableDnsValidation: false,
+                disableDNSValidation: false,
                 smtpOptions: {
                     disabledCommands: ['AUTH'],
                     secure: false
