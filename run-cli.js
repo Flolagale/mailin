@@ -2,40 +2,40 @@
 'use strict';
 
 var forever = require('forever-monitor');
-var logger = require('./lib/logger');
-var path = require('path');
+var logger  = require('./lib/logger');
+var path    = require('path');
 
-var pkg = require('./package.json');
+var pkg     = require('./package.json');
 
 var restartCount = 0;
 var mailinProcess = new (forever.Monitor)(path.join(__dirname, 'cli.js'), {
     max: 1000,
     minUptime: 10000,
-    args: process.argv.slice(2)
+    options: process.argv.slice(2)
 });
 
 mailinProcess.on('error', function (err) {
-    logger.error('Error caused Mailin to crash.');
-    logger.error('Please report this to ' + pkg.bugs.url);
-    logger.error(err);
-    logger.info();
-    logger.info();
+  logger.error('Error caused Mailin to crash.');
+  logger.error('Please report this to ' + pkg.bugs.url);
+  logger.error(err);
+  logger.info();
+  logger.info();
 });
 
 mailinProcess.on('restart', function () {
-    logger.warn('It is likely that an error caused Mailin to crash.');
-    logger.warn('Please report this to ' + pkg.bugs.url);
-    logger.warn('Mailin restarted.');
+  logger.warn('It is likely that an error caused Mailin to crash.');
+  logger.warn('Please report this to ' + pkg.bugs.url);
+  logger.warn('Mailin restarted.');
 
-    ++restartCount;
-    logger.warn('Restart count: ' + restartCount);
+  ++restartCount;
+  logger.warn('Restart count: ' + restartCount);
 
-    logger.info();
-    logger.info();
+  logger.info();
+  logger.info();
 });
 
 mailinProcess.on('exit', function () {
-    logger.info('Mailin stopped.');
+  logger.info('Mailin stopped.');
 });
 
 mailinProcess.start();
