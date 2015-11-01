@@ -9,7 +9,6 @@ var util = require('util');
 
 /* Make an http server to receive the webhook. */
 var server = express();
-server.use(server.router);
 
 server.head('/webhook', function (req, res) {
     console.log('Received head request from webhook.');
