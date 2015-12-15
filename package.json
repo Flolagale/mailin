@@ -49,6 +49,7 @@
     "winston": "^1.0.0"
   },
   "devDependencies": {
+    "async": "^1.5.0",
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
     "express": "^4.13.0",
@@ -56,6 +57,7 @@
     "grunt-contrib-jshint": "^0.11.2",
     "grunt-jsbeautifier": "~0.2.10",
     "grunt-mocha-test": "^0.12.7",
+    "mocha": "^1.20.0",
     "multiparty": "^4.1.2",
     "should": "^7.0.1",
     "smtp-connection": "^1.2.0"
