@@ -16,15 +16,34 @@ chai.use(chaiAsPromised);
 var should = null;
 should = chai.Should();
 
+var server = express(),
+    conn;
+var doing = 0;
+
 before(function (done) {
-    mailin.start({
-        // verbose: true,
-        smtpOptions: {
-            secure: false
-        }
-    }, function (err) {
+    /* Make an http server to receive the webhook. */
+    server.head('/webhook', function (req, res) {
+        res.send(200);
+        doing--;
+    });
+
+    conn = server.listen(3000, function (err) {
+        if (err) console.log(err);
         should.not.exist(err);
-        done();
+
+        console.log('Http server listening on port 3000');
+
+        // This checks the webhook; that's why the server must be already up and listening
+        mailin.start({
+            // verbose: true,
+            smtpOptions: {
+                secure: false
+            }
+        }, function (err) {
+            should.not.exist(err);
+            done();
+        });
+
     });
 });
 
@@ -36,7 +55,7 @@ describe('Mailin', function () {
     it('should post a json to a webhook after receiving an email and trigger some events', function (done) {
         this.timeout(30000);
 
-        var doing = 3; // Number of async operations we need to wait for before calling done
+        doing += 4; // Number of async operations we need to wait for before calling done
 
         var expectedSpamScore = 3.3;
         if (!shell.which('spamassassin') || !shell.which('spamc')) {
@@ -119,13 +138,8 @@ describe('Mailin', function () {
             }
         });
 
-        /* Make an http server to receive the webhook. */
-        var server = express(),
-            conn;
 
-        server.head('/webhook', function (req, res) {
-            res.send(200);
-        });
+
         server.post('/webhook', function (req, res) {
             console.log('Receiving webhook.');
 
@@ -214,36 +228,31 @@ describe('Mailin', function () {
                 }
             }, 1000);
         });
-        conn = server.listen(3000, function (err) {
-            if (err) console.log(err);
-            should.not.exist(err);
 
-            console.log('Http server listening on port 3000');
 
-            /* Make an smtp client to send an email. */
-            var client = new SMTPConnection({
-                port: 2500,
-                ignoreTLS: true
-            });
-
-            client.connect(function () {
-                client.send({
-                    from: {
-                        name: '',
-                        address: 'envelopefrom@jokund.com'
-                    },
-                    to: [{
-                        name: '',
-                        address: 'envelopeto@jokund.com'
-                    }]
-                }, fs.createReadStream('./test/fixtures/test.eml'), function (err) {
-                    if (err) {
-                        done(err);
-                    }
-                });
-            });
-
+        /* Make an smtp client to send an email. */
+        var client = new SMTPConnection({
+            port: 2500,
+            ignoreTLS: true
         });
+
+        client.connect(function () {
+            client.send({
+                from: {
+                    name: '',
+                    address: 'envelopefrom@jokund.com'
+                },
+                to: [{
+                    name: '',
+                    address: 'envelopeto@jokund.com'
+                }]
+            }, fs.createReadStream('./test/fixtures/test.eml'), function (err) {
+                if (err) {
+                    done(err);
+                }
+            });
+        });
+
     });
 
     it('should convert an HTML-only message to text', function (done) {
