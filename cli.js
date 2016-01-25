@@ -24,6 +24,7 @@ var pkg = require('./package.json');
 
 program.version(pkg.version)
     .option('-p, --port <n>', 'The port to which the mailin smtp server should listen to. Default to 25.', parseInt)
+    .option('-i, --host <n>', 'The host ip on which the mailin smtp server should accept connections. Default to any valid address.')
     .option('-w, --webhook [url]', 'The webhook url to which the parsed emails are posted. Default to http://localhost:3000/webhook.')
     .option('-l, --log-file [file path]', "The log file path. Default to '/var/log/mailin.log'.")
     .option('--disable-dkim', 'Disable dkim checking. The dkim field in the webhook payload will be set to false.')
@@ -48,6 +49,7 @@ smtpOptions.disabledCommands = program.disabledSmtpCommands;
 
 mailin.start({
     port: program.port || 25,
+    host: program.host || '0.0.0.0',
     webhook: program.webhook || 'http://localhost:3000/webhook',
     logFile: program.logFile || '/var/log/mailin.log',
     disableDkim: program.disableDkim,
