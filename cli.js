@@ -59,6 +59,7 @@ mailin.start({
     debug: program.debug,
     profile: program.profile,
     disableDNSValidation: !program.enableDnsValidation,
+    webhookAuth: program.webhookBasicAuth || false,
     smtpOptions: smtpOptions
 }, function (err) {
     if (err) process.exit(1);
