@@ -36,6 +36,7 @@ before(function (done) {
         // This checks the webhook; that's why the server must be already up and listening
         mailin.start({
             // verbose: true,
+            mailhopsApiKey: false,
             smtpOptions: {
                 secure: false
             }
@@ -75,13 +76,13 @@ describe('Mailin', function () {
 
         mailin.on('message', function (connection, data) {
             console.log("Event 'message' triggered.");
-            // console.log(data);
             try {
 
                 data.attachments[0].content.toString().should.eql('my dummy attachment contents');
 
                 /* Delete the headers that include a timestamp. */
                 delete data.headers.received;
+                delete data.receivedDate;
 
                 data.should.eql({
                     html: '<b>Hello world!</b>',
@@ -94,7 +95,6 @@ describe('Mailin', function () {
                         'mime-version': '1.0'
                     },
                     priority: 'normal',
-                    receivedDate: '2016-12-02T17:41:31.000Z',
                     from: [{
                         address: 'me@jokund.com',
                         name: 'Me'
@@ -128,15 +128,15 @@ describe('Mailin', function () {
                     }],
                     spf: 'failed',
                     spamScore: expectedSpamScore,
-                    language: 'pidgin',
                     mailHops: null,
+                    language: 'pidgin',
                     cc: [],
                     connection: connData
                 });
 
                 doing--;
             } catch (e) {
-                done(e);
+              done(e);
             }
         });
 
@@ -162,6 +162,7 @@ describe('Mailin', function () {
 
                     /* Delete the headers that include a timestamp. */
                     delete mailinMsg.headers.received;
+                    delete mailinMsg.receivedDate;
 
                     /* And the connection id, which is random. */
                     delete mailinMsg.data;
@@ -177,7 +178,6 @@ describe('Mailin', function () {
                             'mime-version': '1.0'
                         },
                         priority: 'normal',
-                        receivedDate: '2016-12-02T17:41:31.000Z',
                         from: [{
                             address: 'me@jokund.com',
                             name: 'Me'
@@ -220,7 +220,7 @@ describe('Mailin', function () {
 
                     doing--;
                 } catch (e) {
-                    done(e);
+                  done(e);
                 }
             });
 
@@ -263,7 +263,7 @@ describe('Mailin', function () {
         this.timeout(10000);
 
         mailin.on('message', function (connection, data) {
-            // console.log(data);
+
             try {
                 data.text.should.eql('HELLO WORLD\nThis is a line that needs to be at least a little longer than 80 characters so\nthat we can check the character wrapping functionality.\n\nThis is a test of a link [https://github.com/Flolagale/mailin] .');
                 done();
