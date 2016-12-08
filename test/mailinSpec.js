@@ -94,6 +94,7 @@ describe('Mailin', function () {
                         'mime-version': '1.0'
                     },
                     priority: 'normal',
+                    receivedDate: '2016-12-02T17:41:31.000Z',
                     from: [{
                         address: 'me@jokund.com',
                         name: 'Me'
@@ -128,6 +129,7 @@ describe('Mailin', function () {
                     spf: 'failed',
                     spamScore: expectedSpamScore,
                     language: 'pidgin',
+                    mailHops: null,
                     cc: [],
                     connection: connData
                 });
@@ -175,6 +177,7 @@ describe('Mailin', function () {
                             'mime-version': '1.0'
                         },
                         priority: 'normal',
+                        receivedDate: '2016-12-02T17:41:31.000Z',
                         from: [{
                             address: 'me@jokund.com',
                             name: 'Me'
@@ -208,6 +211,7 @@ describe('Mailin', function () {
                         spf: 'failed',
                         spamScore: expectedSpamScore,
                         language: 'pidgin',
+                        mailHops: null,
                         cc: [],
                         connection: connData
                     });

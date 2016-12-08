@@ -2,6 +2,9 @@ X-Mailer: Nodemailer 1.0
 From: "Me" <me@jokund.com>
 To: to@jokund.com
 Content-Type: text/html
+Received: from mta2.e.mozilla.org (mta2.e.mozilla.org [68.232.195.239])
+	(using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+	; Fri,  2 Dec 2016 09:41:31 -0800 (PST)
 
 <h1>Hello World</h1>
 <p>This is a line that needs to be at least a little longer than 80 characters so that we can check the character wrapping functionality.</p>
