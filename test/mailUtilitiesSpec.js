@@ -37,3 +37,18 @@ describe('The mail signature verfier', function () {
         });
     });
 });
+
+describe('The mailhops verfier', function () {
+    it('should be able to verify the route',
+        function (done) {
+          var email = fs.readFileSync('./test/fixtures/test.eml').toString();
+            mailUtilities.getMailHops(email, "", function (err, result) {
+              if (err) console.log(err);
+              should.not.exist(err);
+
+              result.response.route.length.should.eql(2);
+              result.response.route[0].ip.should.eql('68.232.195.239');
+              done();
+          });
+        });
+});
