@@ -1,6 +1,6 @@
 {
   "name": "mailin",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Artisanal inbound emails for every web app",
   "engine": "node ~0.12.4",
   "main": "index.js",
