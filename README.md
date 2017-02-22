@@ -12,8 +12,8 @@ Mailin relies heavily on the excellent work of [@andris9](https://github.com/and
 
 Why? Because we needed it for our startup [jokund.com](http://jokund.com).
 
-### Show me a demo!
-Sure! A demo is live at [mailin.io](http://mailin.io). Please note that it is running on the smallest Digital Ocean instance, so be fair if it is overloaded.
+~~### Show me a demo!
+Sure! A demo is live at [mailin.io](http://mailin.io). Please note that it is running on the smallest Digital Ocean instance, so be fair if it is overloaded.~~
 
 ###Initial setup
 
