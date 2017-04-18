@@ -1,4 +1,4 @@
-#Mailin [![Build Status](https://travis-ci.org/Flolagale/mailin.svg?branch=master)](https://travis-ci.org/Flolagale/mailin)
+# Mailin [![Build Status](https://travis-ci.org/Flolagale/mailin.svg?branch=master)](https://travis-ci.org/Flolagale/mailin)
 
 __Artisanal inbound emails for every web app__
 <img align="right" src="postman.jpg"/>
@@ -15,9 +15,9 @@ Why? Because we needed it for our startup [jokund.com](http://jokund.com).
 ### Show me a demo!
 Sure! A demo is live at [mailin.io](http://mailin.io). Please note that it is running on the smallest Digital Ocean instance, so be fair if it is overloaded.
 
-###Initial setup
+### Initial setup
 
-####Dependencies
+#### Dependencies
 
 Mailin can run without any dependencies other than node itself, but having them allow you to use some additional features.
 
@@ -34,14 +34,14 @@ sudo aptitude install spamassassin spamc
 ```
 Spamassassin is not enabled by default, enable it in ```/etc/default/spamassassin```.
 
-####Node versions
+#### Node versions
 
 The latest version of Mailin (^3.0.0) runs on node ~0.12.0 or iojs ^2.0.0. If you are running an older version of node such as ~0.10.0, you can install Mailin ^2.0.0:
 ```
 npm install mailin@2.0.0
 ```
 
-####The crux: setting up your DNS correctly
+#### The crux: setting up your DNS correctly
 
 In order to receive emails, your smtp server address should be made available somewhere. Two records should be added to your DNS records. Let us pretend that we want to receive emails at ```*@subdomain.domain.com```:
 * First an MX record: ```subdomain.domain.com MX 10 mxsubdomain.domain.com```. This means that the mail server for addresses like ```*@subdomain.domain.com``` will be ```mxsubdomain.domain.com```.
@@ -50,8 +50,8 @@ In order to receive emails, your smtp server address should be made available so
 You can fire up Mailin (see next section) and use an [smtp server tester](http://mxtoolbox.com/diagnostic.aspx) to verify that everything is correct.
 
 
-###Using Mailin
-####From the command line
+### Using Mailin
+#### From the command line
 
 Install mailin globally.
 
@@ -74,7 +74,7 @@ and make sure that your user can write to the log file.
 
 At this point, Mailin will listen for incoming emails, parse them and post an urlencoded form ```multipart/form-data``` to your webhook url.
 
-#####Webhook format
+##### Webhook format
 The webhook payload is a multipart form with a ```mailinMsg``` fields always present and some optional additional fields containing the content of the attachments. How to handle this? We have got you covered, there is a working example using node and express in [mailin/samples/server.js](https://github.com/Flolagale/mailin/blob/master/samples/server.js). Anyway, once parsed, you should end up with something like:
 ```
 {
@@ -129,14 +129,14 @@ The webhook payload is a multipart form with a ```mailinMsg``` fields always pre
 }
 ```
 
-#####Gotchas
+##### Gotchas
 * ```error: listen EACCES```: your user do not have sufficients privileges to run on the given port. Ports under 1000 are restricted to root user. Try with [sudo](http://xkcd.com/149/).
 * ```error: listen EADDRINUSE```: the current port is already used by something. Most likely, you are trying to use port 25 and your machine's [mail transport agent](http://en.wikipedia.org/wiki/Message_transfer_agent) is already running. Stop it with something like ```sudo service exim4 stop``` or ```sudo service postfix stop``` before using Mailin.
 * ```error: Unable to compute spam score ECONNREFUSED```: it is likely that spamassassin is not enabled on your machine, check the ```/etc/default/spamassassin``` file.
 * ```node: command not found```: most likely, your system does not have node installed or it is installed with a different name. For instance on Debian/Ubuntu, the node interpreter is called nodejs. The quick fix is making a symlink: ```ln -s $(which nodejs) /usr/bin/node``` to make the node command available.
 * ```Uncaught SenderError: Mail from command failed - 450 4.1.8 <an@email.address>: Sender address rejected: Domain not found```: The smtpOption `disableDNSValidation` is set to `false` and an email was sent from an invalid domain.
 
-####Embedded inside a node application
+#### Embedded inside a node application
 
 Install Mailin locally.
 
