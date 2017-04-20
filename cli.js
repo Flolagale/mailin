@@ -36,6 +36,7 @@ program.version(pkg.version)
     .option('--enable-dns-validation', 'Enable DNS domain lookup')
     .option('--disabled-smtp-commands [value]', 'smtp disabled commands list, comma separated', list)
     .option('--smtp [value]', 'smtp options split with :, check https://github.com/andris9/smtp-server/tree/v1.4.0', collectOptions, {});
+    .option('--webhook-basic-auth [value]', 'If your webhook is secured using HTTP basic auth. Format: user:password')
 
 /* Hack the argv object so that commander thinks that this script is called
  * 'mailin'. The help info will look nicer. */
@@ -59,7 +60,8 @@ mailin.start({
     debug: program.debug,
     profile: program.profile,
     disableDNSValidation: !program.enableDnsValidation,
-    smtpOptions: smtpOptions
+    smtpOptions: smtpOptions,
+    webhookAuth: program.webhookBasicAuth || false
 }, function (err) {
     if (err) process.exit(1);
 
