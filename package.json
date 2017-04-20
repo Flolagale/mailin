@@ -2,7 +2,7 @@
   "name": "mailin",
   "version": "3.0.4",
   "description": "Artisanal inbound emails for every web app",
-  "engine": "node ~0.12.4",
+  "engine": "node ^4.2.1",
   "main": "index.js",
   "bin": {
     "mailin": "./run-cli.js"
@@ -59,6 +59,7 @@
     "grunt-mocha-test": "^0.12.7",
     "mocha": "^1.20.0",
     "multiparty": "^4.1.2",
+    "mocha": "^2.3.4",
     "should": "^7.0.1",
     "smtp-connection": "^1.2.0"
   }
