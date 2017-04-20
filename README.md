@@ -13,6 +13,7 @@ Mailin relies heavily on the excellent work of [@andris9](https://github.com/and
 Why? Because we needed it for our startup [jokund.com](http://jokund.com).
 
 ### Show me a demo!
+
 Sure! A demo is live at [mailin.io](http://mailin.io). Please note that it is running on the smallest Digital Ocean instance, so be fair if it is overloaded.
 
 ### Initial setup
@@ -22,6 +23,7 @@ Sure! A demo is live at [mailin.io](http://mailin.io). Please note that it is ru
 Mailin can run without any dependencies other than node itself, but having them allow you to use some additional features.
 
 So first make sure the node is available, and the ```node``` command as well. On Debian/Ubuntu boxes:
+
 ```
 sudo aptitude install nodejs ; sudo ln -s $(which nodejs) /usr/bin/node
 ```
@@ -29,14 +31,17 @@ sudo aptitude install nodejs ; sudo ln -s $(which nodejs) /usr/bin/node
 To handle dkim and spf checking, Mailin depends on Python 2.7. On Linux machines, it is very not likely that you don't have a decent version of Python available.
 
 To handle the spam score computation, Mailin depends on spamassassin and its server interface spamc. Both should be available as packages on your machine. For instance on Debian/Ubuntu boxes:
+
 ```
 sudo aptitude install spamassassin spamc
 ```
+
 Spamassassin is not enabled by default, enable it in ```/etc/default/spamassassin```.
 
 #### Node versions
 
 The latest version of Mailin (^3.0.0) runs on node ~0.12.0 or iojs ^2.0.0. If you are running an older version of node such as ~0.10.0, you can install Mailin ^2.0.0:
+
 ```
 npm install mailin@2.0.0
 ```
@@ -62,20 +67,25 @@ sudo npm install -g mailin
 Run it, specifying your webhook url (addtionnal help can be found using ```mailin --help```). By default, Mailin will listen on port 25, the standard smtp port. you can change this port for testing purpose using the ```--port``` option. However, do not change this port if you want to receive emails from the real world.
 
 Ports number under 1000 are reserved to root user. So two options here. Either run Mailin as root:
+
 ```
 sudo mailin --webhook http://mydomain.com/incoming_emails
 ```
+
 Or, prefered choice, use something like ```authbind``` to run Mailin with a standard user while still using port 25.
 Here comes a [tutorial on how to setup authbind](http://respectthecode.tumblr.com/post/16461876216/using-authbind-to-run-node-js-on-port-80-with-dreamhost). In this case, do something like:
+
 ```
 authbind --deep mailin --webhook http://mydomain.com/incoming_emails
 ```
+
 and make sure that your user can write to the log file.
 
 At this point, Mailin will listen for incoming emails, parse them and post an urlencoded form ```multipart/form-data``` to your webhook url.
 
 ##### Webhook format
 The webhook payload is a multipart form with a ```mailinMsg``` fields always present and some optional additional fields containing the content of the attachments. How to handle this? We have got you covered, there is a working example using node and express in [mailin/samples/server.js](https://github.com/Flolagale/mailin/blob/master/samples/server.js). Anyway, once parsed, you should end up with something like:
+
 ```
 {
   mailinMsg:
