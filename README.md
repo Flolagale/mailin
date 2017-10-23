@@ -61,11 +61,16 @@ sudo npm install -g mailin
 
 Run it, specifying your webhook url (addtionnal help can be found using ```mailin --help```). By default, Mailin will listen on port 25, the standard smtp port. you can change this port for testing purpose using the ```--port``` option. However, do not change this port if you want to receive emails from the real world.
 
-Ports number under 1000 are reserved to root user. So two options here. Either run Mailin as root:
+Ports number under 1000 are reserved to root user. So three options here. Either run Mailin as root:
 ```
 sudo mailin --webhook http://mydomain.com/incoming_emails
 ```
-Or, prefered choice, use something like ```authbind``` to run Mailin with a standard user while still using port 25.
+
+Or use root to give regular users permission to serve on ports below 1000:
+```
+sudo setcap 'cap_net_bind_service=+ep' $(readlink -f $(which node))
+```
+Or use something like ```authbind``` to run Mailin with a standard user while still using port 25.
 Here comes a [tutorial on how to setup authbind](http://respectthecode.tumblr.com/post/16461876216/using-authbind-to-run-node-js-on-port-80-with-dreamhost). In this case, do something like:
 ```
 authbind --deep mailin --webhook http://mydomain.com/incoming_emails
